@@ -1,0 +1,388 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------
+boto3 = Control ALL AWS Services from Python! // boto3 = Full control of ALL AWS infrastructure from Python!
+This is the backbone of AWS DevOps automation! 🚀
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+📊 Summary Table – All AWS Services
+
+Service          What it does
+---------------------------------------------------------
+S3               File storage, backups, uploads
+
+EC2              Virtual machines, servers
+
+Lambda           Serverless functions
+
+RDS              Managed databases
+
+IAM              Users, roles, permissions
+
+CloudWatch       Monitoring, logs, alerts
+
+SNS              Notifications, SMS, email
+
+SQS              Message queues
+
+ECS              Container management
+
+EKS              Kubernetes on AWS
+
+Route53          DNS management
+
+VPC              Networking
+
+SecretsManager   Store passwords/secrets
+----------------------------------------------------------------------------------------------------------------------------------------
+1. Connect to AWS
+
+import boto3
+
+# Connect using default credentials
+client = boto3.client('s3')
+
+# Connect with specific region
+client = boto3.client('ec2', region_name='us-east-1')
+
+# Connect with credentials
+client = boto3.client(
+    's3',
+    aws_access_key_id='YOUR_KEY',
+    aws_secret_access_key='YOUR_SECRET',
+    region_name='us-east-1'
+)
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+2. S3 – File Storage
+
+s3 = boto3.client('s3')
+
+# Create bucket
+s3.create_bucket(Bucket='mybucket')
+
+# Upload file
+s3.upload_file('local_file.txt', 'mybucket', 'remote_file.txt')
+
+# Download file
+s3.download_file('mybucket', 'remote_file.txt', 'local_file.txt')
+
+# List all buckets
+response = s3.list_buckets()
+for bucket in response['Buckets']:
+    print(bucket['Name'])
+
+# List files in bucket
+response = s3.list_objects(Bucket='mybucket')
+for obj in response['Contents']:
+    print(obj['Key'])
+
+# Delete file
+s3.delete_object(Bucket='mybucket', Key='file.txt')
+
+# Delete bucket
+s3.delete_bucket(Bucket='mybucket')
+
+# Make file public
+s3.put_object_acl(
+    Bucket='mybucket',
+    Key='file.txt',
+    ACL='public-read'
+)
+
+Real DevOps Use:
+
+# Backup logs to S3
+import boto3, os
+
+s3 = boto3.client('s3')
+
+for file in os.listdir('/var/log'):
+    s3.upload_file(
+        f'/var/log/{file}',
+        'my-backup-bucket',
+        f'logs/{file}'
+    )
+print("Logs backed up to S3! ✅")
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+3. EC2 – Virtual Machines
+
+ec2 = boto3.client('ec2')
+
+# Launch new instance
+ec2.run_instances(
+    ImageId='ami-12345678',
+    InstanceType='t2.micro',
+    MinCount=1,
+    MaxCount=1
+)
+
+# List all instances
+response = ec2.describe_instances()
+for reservation in response['Reservations']:
+    for instance in reservation['Instances']:
+        print(instance['InstanceId'], instance['State']['Name'])
+
+# Stop instance
+ec2.stop_instances(InstanceIds=['i-1234567890'])
+
+# Start instance
+ec2.start_instances(InstanceIds=['i-1234567890'])
+
+# Terminate instance
+ec2.terminate_instances(InstanceIds=['i-1234567890'])
+
+# Reboot instance
+ec2.reboot_instances(InstanceIds=['i-1234567890'])
+
+# Get instance status
+ec2.describe_instance_status(InstanceIds=['i-1234567890'])
+
+Real DevOps Use:
+
+# Auto stop all instances at night to save cost!
+ec2 = boto3.client('ec2')
+
+response = ec2.describe_instances(
+    Filters=[{'Name': 'instance-state-name', 'Values': ['running']}]
+)
+
+for reservation in response['Reservations']:
+    for instance in reservation['Instances']:
+        ec2.stop_instances(InstanceIds=[instance['InstanceId']])
+        print(f"Stopped: {instance['InstanceId']}")
+
+print("All instances stopped! 💰 Cost saved!")
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+4. Lambda – Serverless Functions
+
+lambda_client = boto3.client('lambda')
+
+# Create function
+lambda_client.create_function(
+    FunctionName='myfunction',
+    Runtime='python3.9',
+    Role='arn:aws:iam::123:role/myrole',
+    Handler='lambda_function.lambda_handler',
+    Code={'ZipFile': open('function.zip', 'rb').read()}
+)
+
+# Invoke function
+response = lambda_client.invoke(
+    FunctionName='myfunction',
+    Payload='{"key": "value"}'
+)
+
+# List functions
+response = lambda_client.list_functions()
+for func in response['Functions']:
+    print(func['FunctionName'])
+
+# Delete function
+lambda_client.delete_function(FunctionName='myfunction')
+
+# Update function code
+lambda_client.update_function_code(
+    FunctionName='myfunction',
+    ZipFile=open('function.zip', 'rb').read()
+)
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+5. RDS – Databases
+
+rds = boto3.client('rds')
+
+# Create database
+rds.create_db_instance(
+    DBInstanceIdentifier='mydb',
+    DBInstanceClass='db.t2.micro',
+    Engine='mysql',
+    MasterUsername='admin',
+    MasterUserPassword='password',
+    AllocatedStorage=20
+)
+
+# List databases
+response = rds.describe_db_instances()
+for db in response['DBInstances']:
+    print(db['DBInstanceIdentifier'], db['DBInstanceStatus'])
+
+# Stop database
+rds.stop_db_instance(DBInstanceIdentifier='mydb')
+
+# Start database
+rds.start_db_instance(DBInstanceIdentifier='mydb')
+
+# Delete database
+rds.delete_db_instance(
+    DBInstanceIdentifier='mydb',
+    SkipFinalSnapshot=True
+)
+
+# Create snapshot/backup
+rds.create_db_snapshot(
+    DBSnapshotIdentifier='mydb-backup',
+    DBInstanceIdentifier='mydb'
+)
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+6. IAM – Users & Permissions
+
+iam = boto3.client('iam')
+
+# Create user
+iam.create_user(UserName='john')
+
+# List users
+response = iam.list_users()
+for user in response['Users']:
+    print(user['UserName'])
+
+# Create access keys for user
+response = iam.create_access_key(UserName='john')
+print(response['AccessKey']['AccessKeyId'])
+print(response['AccessKey']['SecretAccessKey'])
+
+# Attach policy to user
+iam.attach_user_policy(
+    UserName='john',
+    PolicyArn='arn:aws:iam::aws:policy/AmazonS3FullAccess'
+)
+
+# Create group
+iam.create_group(GroupName='developers')
+
+# Add user to group
+iam.add_user_to_group(GroupName='developers', UserName='john')
+
+# Delete user
+iam.delete_user(UserName='john')
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+7. CloudWatch – Monitoring & Alerts
+
+cloudwatch = boto3.client('cloudwatch')
+
+# Put custom metric
+cloudwatch.put_metric_data(
+    Namespace='MyApp',
+    MetricData=[{
+        'MetricName': 'ErrorCount',
+        'Value': 5,
+        'Unit': 'Count'
+    }]
+)
+
+# Create alarm
+cloudwatch.put_metric_alarm(
+    AlarmName='HighCPU',
+    MetricName='CPUUtilization',
+    Namespace='AWS/EC2',
+    Statistic='Average',
+    Period=300,
+    Threshold=80.0,
+    ComparisonOperator='GreaterThanThreshold',
+    EvaluationPeriods=2
+)
+
+# List alarms
+response = cloudwatch.describe_alarms()
+for alarm in response['MetricAlarms']:
+    print(alarm['AlarmName'], alarm['StateValue'])
+
+# Get logs
+logs = boto3.client('logs')
+response = logs.get_log_events(
+    logGroupName='/var/log/myapp',
+    logStreamName='mystream'
+)
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+8. SNS – Notifications & Alerts
+
+sns = boto3.client('sns')
+
+# Create topic
+response = sns.create_topic(Name='alerts')
+topic_arn = response['TopicArn']
+
+# Subscribe email
+sns.subscribe(
+    TopicArn=topic_arn,
+    Protocol='email',
+    Endpoint='admin@example.com'
+)
+
+# Send notification
+sns.publish(
+    TopicArn=topic_arn,
+    Message='Server is down!',
+    Subject='ALERT: Server Issue'
+)
+
+# Send SMS
+sns.publish(
+    PhoneNumber='+1234567890',
+    Message='Deployment successful!'
+)
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+9. SQS – Message Queue
+
+sqs = boto3.client('sqs')
+
+# Create queue
+sqs.create_queue(QueueName='myqueue')
+
+# Send message
+sqs.send_message(
+    QueueUrl='https://sqs.us-east-1.amazonaws.com/123/myqueue',
+    MessageBody='Deploy job started'
+)
+
+# Receive message
+response = sqs.receive_message(
+    QueueUrl='https://sqs.us-east-1.amazonaws.com/123/myqueue'
+)
+for msg in response['Messages']:
+    print(msg['Body'])
+
+# Delete message
+sqs.delete_message(
+    QueueUrl='https://sqs.us-east-1.amazonaws.com/123/myqueue',
+    ReceiptHandle=msg['ReceiptHandle']
+)
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+10. ECS – Container Service
+
+ecs = boto3.client('ecs')
+
+# List clusters
+response = ecs.list_clusters()
+print(response['clusterArns'])
+
+# List tasks
+response = ecs.list_tasks(cluster='mycluster')
+print(response['taskArns'])
+
+# Run task
+ecs.run_task(
+    cluster='mycluster',
+    taskDefinition='mytask',
+    count=1
+)
+
+# Stop task
+ecs.stop_task(
+    cluster='mycluster',
+    task='task-id'
+)
+
+# Update service (deploy new version)
+ecs.update_service(
+    cluster='mycluster',
+    service='myservice',
+    forceNewDeployment=True
+)
+
