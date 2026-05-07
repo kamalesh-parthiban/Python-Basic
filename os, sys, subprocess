@@ -1,0 +1,665 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. os, sys, subprocess   → System automation  // os + sys + subprocess  → can absolutely be done in Bash  // Python modules themselves are cross-platform.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+os + sys + subprocess are Python modules.
+
+They work on:
+-------------------------
+✔ Linux
+✔ Windows
+✔ macOS
+✔ Unix systems
+
+import os            -- Think of it as: "Talking to your computer's file system and environment"
+import subprocess    -- Run Shell Commands from Python
+import sys           -- Think of it as: "Controlling how your Python script runs"
+
+In DevOps — use os for file/path/env tasks and subprocess for running tools like git, docker, kubectl, systemctl! 🚀
+----------------
+os
+---------------
+
+📊 Summary Table
+
+Category            | Key Functions
+--------------------|---------------------------------------------------------
+Directories         | getcwd, chdir, listdir, makedirs, rmdir
+Files               | remove, rename, path.exists, path.getsize
+Environment Vars    | environ, getenv, environ.get
+Paths               | path.join, path.basename, path.dirname
+Walk Folders        | os.walk
+Permissions         | chmod, chown, stat
+System Info         | cpu_count, getpid, getlogin
+Symlinks            | symlink, readlink
+
+They come preinstalled with Python — no pip install needed.
+
+📁 1. Directory (Folder) Operations
+
+import os
+
+os.getcwd()                        # Get current directory
+os.chdir('/home/user')             # Change directory
+os.listdir('/home/user')           # List files & folders
+os.makedirs('/home/user/a/b/c')    # Create nested folders
+os.mkdir('/home/user/newfolder')   # Create single folder
+os.rmdir('/home/user/emptyfolder') # Delete empty folder
+os.removedirs('/home/user/a/b/c')  # Delete nested folders
+os.path.exists('/home/user')       # Check if folder exists
+os.path.isdir('/home/user')        # Check if it's a directory
+
+2. File Operations
+
+os.remove('file.txt')              # Delete a file
+os.rename('old.txt', 'new.txt')    # Rename a file
+os.path.exists('file.txt')         # Check if file exists
+os.path.isfile('file.txt')         # Check if it's a file
+os.path.getsize('file.txt')        # Get file size in bytes
+os.path.abspath('file.txt')        # Get full path of file
+
+🌍 3. Environment Variables
+
+os.environ                         # Show ALL environment variables
+os.environ.get('DB_PASSWORD')      # Read an env variable
+os.environ['DB_PASSWORD']          # Read (throws error if missing)
+os.environ['NEW_VAR'] = 'value'    # Set an env variable
+os.getenv('DB_HOST', 'localhost')  # Read with default value
+
+Real DevOps Use:
+
+# Read database credentials from environment
+db_host = os.getenv('DB_HOST', 'localhost')
+db_pass = os.environ.get('DB_PASSWORD')
+
+if not db_pass:
+    print("ERROR: DB_PASSWORD not set!")
+    sys.exit(1)
+
+🔍 4. Path Operations (os.path)
+
+os.path.join('/home', 'user', 'file.txt')  # Join paths safely
+# Output: /home/user/file.txt
+
+os.path.basename('/home/user/file.txt')    # Get filename
+# Output: file.txt
+
+os.path.dirname('/home/user/file.txt')     # Get folder path
+# Output: /home/user
+
+os.path.split('/home/user/file.txt')       # Split path & file
+# Output: ('/home/user', 'file.txt')
+
+os.path.splitext('file.txt')               # Split name & extension
+# Output: ('file', '.txt')
+
+os.path.expanduser('~/documents')          # Expand ~ to home dir
+# Output: /home/user/documents
+
+Real DevOps Use — Find all log files:
+
+for root, dirs, files in os.walk('/var/log'):
+    for file in files:
+        if file.endswith('.log'):
+            print(os.path.join(root, file))
+
+🔐 6. File Permissions
+
+os.chmod('script.sh', 0o755)       # Make file executable
+os.chown('file.txt', 1000, 1000)   # Change owner (uid, gid)
+os.stat('file.txt')                # Get file details & permissions
+
+Real DevOps Use:
+
+# Make deploy script executable
+os.chmod('/opt/deploy.sh', 0o755)
+
+🖥️ 7. System Information
+
+os.name                            # OS type ('nt'=Windows, 'posix'=Linux/Mac)
+os.uname()                         # System info (Linux only)
+os.getpid()                        # Current process ID
+os.getppid()                       # Parent process ID
+os.getlogin()                      # Current logged-in user
+os.cpu_count()                     # Number of CPUs
+
+🔗 8. Symbolic Links
+
+os.symlink('original.txt', 'link.txt')   # Create symbolic link
+os.readlink('link.txt')                   # Read where link points
+os.path.islink('link.txt')               # Check if it's a symlink
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+subprocess --  Run Shell Commands from Python  // subprocess is the most powerful DevOps library — it can run ANY command you type in terminal, from inside Python! 🚀
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+🔄 os vs subprocess — Same Task Different Way
+
+Task             | os way                         | subprocess way
+-----------------|--------------------------------|-----------------------------------------------
+Create folder    | os.makedirs('/tmp/test')      | subprocess.run(['mkdir', '-p', '/tmp/test'])
+
+Delete file      | os.remove('file.txt')         | subprocess.run(['rm', 'file.txt'])
+
+List files       | os.listdir('/home')           | subprocess.run(['ls', '/home'])
+
+Check disk       | ❌ can't do                    | subprocess.run(['df', '-h'])
+
+Restart service  | ❌ can't do                    | subprocess.run(['systemctl', 'restart', 'nginx'])
+
+Run git          | ❌ can't do                    | subprocess.run(['git', 'pull'])
+
+
+📊 Summary Table
+
+Category        Tasks
+---------------------------------------------------------
+Basic           run, check, shell commands
+
+Output          capture stdout, stderr, returncode
+
+Files           mkdir, rm, cp, mv, find
+
+System          df, free, ps, kill, uptime
+
+Services        start, stop, restart, status
+
+Packages        apt install, pip install
+
+Git             clone, pull, push, commit
+
+Docker          build, run, stop, compose
+
+Kubernetes      apply, get pods, scale, logs
+
+Network         ping, curl, wget, ssh
+
+Scripts         bash, python, ansible, terraform
+
+Errors          CalledProcessError, timeout
+
+
+--------------------------------------------------------------
+1. Basic Command Running
+
+import subprocess
+
+# Simple command
+subprocess.run(['ls', '-la'])
+
+# Run with shell=True (like typing in terminal)
+subprocess.run('ls -la', shell=True)
+
+# Run and check for errors automatically
+subprocess.run(['git', 'pull'], check=True)
+-------------------------------------------------
+2. Capturing Output
+
+# Capture command output
+result = subprocess.run(['ls', '-la'], capture_output=True, text=True)
+
+print(result.stdout)   # Normal output
+print(result.stderr)   # Error output
+print(result.returncode)  # 0 = success, 1 = failed
+
+# Example - capture disk space
+result = subprocess.run(['df', '-h'], capture_output=True, text=True)
+print(result.stdout)
+-------------------------------------------------
+3. File & Directory Tasks
+
+# Create folder
+subprocess.run(['mkdir', '-p', '/tmp/testfolder'])
+
+# Delete file
+subprocess.run(['rm', '-rf', '/tmp/testfolder'])
+
+# Copy file
+subprocess.run(['cp', 'source.txt', 'dest.txt'])
+
+# Move file
+subprocess.run(['mv', 'old.txt', 'new.txt'])
+
+# List files
+subprocess.run(['ls', '-la', '/home/user'])
+
+# Find files
+subprocess.run(['find', '/var/log', '-name', '*.log'])
+
+# Check disk usage
+subprocess.run(['du', '-sh', '/var/log'])
+-------------------------------------------------
+4. System & Server Tasks
+
+# Check disk space
+subprocess.run(['df', '-h'])
+
+# Check memory
+subprocess.run(['free', '-m'])
+
+# Check CPU info
+subprocess.run(['cat', '/proc/cpuinfo'])
+
+# Check running processes
+subprocess.run(['ps', 'aux'])
+
+# Kill a process
+subprocess.run(['kill', '-9', '1234'])
+
+# Check system uptime
+subprocess.run(['uptime'])
+
+# Check who is logged in
+subprocess.run(['who'])
+-------------------------------------------------
+5. Service Management
+
+# Start a service
+subprocess.run(['systemctl', 'start', 'nginx'])
+
+# Stop a service
+subprocess.run(['systemctl', 'stop', 'nginx'])
+
+# Restart a service
+subprocess.run(['systemctl', 'restart', 'nginx'])
+
+# Check service status
+result = subprocess.run(['systemctl', 'status', 'nginx'],
+                        capture_output=True, text=True)
+print(result.stdout)
+
+# Enable service on boot
+subprocess.run(['systemctl', 'enable', 'nginx'])
+-------------------------------------------------
+6. Package Management
+
+# Update packages (Ubuntu)
+subprocess.run(['apt', 'update'])
+
+# Install a package
+subprocess.run(['apt', 'install', '-y', 'nginx'])
+
+# Remove a package
+subprocess.run(['apt', 'remove', '-y', 'nginx'])
+
+# Install Python package
+subprocess.run(['pip', 'install', 'requests'])
+
+# Install from requirements.txt
+subprocess.run(['pip', 'install', '-r', 'requirements.txt'])
+-------------------------------------------------
+7. Git Operations
+
+# Clone a repo
+subprocess.run(['git', 'clone', 'https://github.com/user/repo.git'])
+
+# Pull latest code
+subprocess.run(['git', 'pull', 'origin', 'main'])
+
+# Add files
+subprocess.run(['git', 'add', '.'])
+
+# Commit
+subprocess.run(['git', 'commit', '-m', 'Auto commit'])
+
+# Push code
+subprocess.run(['git', 'push', 'origin', 'main'])
+
+# Check git status
+result = subprocess.run(['git', 'status'],
+                        capture_output=True, text=True)
+print(result.stdout)
+
+# Check git log
+subprocess.run(['git', 'log', '--oneline', '-5'])
+-------------------------------------------------
+8. Docker Operations
+
+# Build docker image
+subprocess.run(['docker', 'build', '-t', 'myapp:latest', '.'])
+
+# Run container
+subprocess.run(['docker', 'run', '-d', '-p', '80:80', 'myapp'])
+
+# Stop container
+subprocess.run(['docker', 'stop', 'container_id'])
+
+# List containers
+result = subprocess.run(['docker', 'ps'],
+                        capture_output=True, text=True)
+print(result.stdout)
+
+# Pull image
+subprocess.run(['docker', 'pull', 'nginx:latest'])
+
+# Docker compose up
+subprocess.run(['docker-compose', 'up', '-d'])
+
+# Docker compose down
+subprocess.run(['docker-compose', 'down'])
+
+-------------------------------------------------
+9. Kubernetes Operations
+
+# Apply deployment
+subprocess.run(['kubectl', 'apply', '-f', 'deployment.yaml'])
+
+# Get pods
+result = subprocess.run(['kubectl', 'get', 'pods'],
+                        capture_output=True, text=True)
+print(result.stdout)
+
+# Delete pod
+subprocess.run(['kubectl', 'delete', 'pod', 'mypod'])
+
+# Get logs
+result = subprocess.run(['kubectl', 'logs', 'mypod'],
+                        capture_output=True, text=True)
+print(result.stdout)
+
+# Scale deployment
+subprocess.run(['kubectl', 'scale', '--replicas=3',
+                'deployment/myapp'])
+
+--------------------------------------------------
+10. Network Tasks
+
+# Ping a server
+result = subprocess.run(['ping', '-c', '4', 'google.com'],
+                        capture_output=True, text=True)
+print(result.stdout)
+
+# Check open ports
+subprocess.run(['netstat', '-tuln'])
+
+# curl an API
+result = subprocess.run(['curl', '-s', 'https://api.example.com'],
+                        capture_output=True, text=True)
+print(result.stdout)
+
+# wget a file
+subprocess.run(['wget', 'https://example.com/file.zip'])
+
+# Check DNS
+subprocess.run(['nslookup', 'google.com'])
+
+# SSH into server
+subprocess.run(['ssh', 'user@192.168.1.1', 'ls -la'])
+
+-------------------------------------------------------
+11. Running Scripts
+
+# Run bash script
+subprocess.run(['bash', '/opt/deploy.sh'])
+
+# Run python script
+subprocess.run(['python3', 'backup.py'])
+
+# Run with arguments
+subprocess.run(['bash', 'deploy.sh', 'production'])
+
+# Run ansible playbook
+subprocess.run(['ansible-playbook', 'site.yml'])
+
+# Run terraform
+subprocess.run(['terraform', 'apply', '-auto-approve'])
+
+-----------------------------------------------------------------
+12. Error Handling
+
+import subprocess
+
+try:
+    # check=True raises error if command fails
+    result = subprocess.run(
+        ['git', 'pull', 'origin', 'main'],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    print("Success:", result.stdout)
+
+except subprocess.CalledProcessError as e:
+    print("Command Failed!")
+    print("Error:", e.stderr)
+    print("Exit Code:", e.returncode)
+
+------------------------------------------------------------------
+13. Timeout Control
+
+try:
+    # Stop command if takes more than 30 seconds
+    subprocess.run(['ping', 'google.com'],
+                   timeout=30)
+
+except subprocess.TimeoutExpired:
+    print("Command took too long! Stopped.")
+--------------------------------------------------------------------
+
+💡 Most Used in DevOps
+
+1. subprocess.run(['git', 'pull'])           → Auto deployments
+2. subprocess.run(['docker', 'build'])       → CI/CD pipelines
+3. subprocess.run(['kubectl', 'apply'])      → K8s automation
+4. subprocess.run(['systemctl', 'restart'])  → Service management
+5. subprocess.run(['bash', 'script.sh'])     → Run shell scripts
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+sys - Think of it as: "Controlling how your Python script runs" // sys controls HOW your script runs — arguments, exit codes, platform detection & output! 🚀
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. Command Line Arguments
+
+import sys
+
+# script called as: python deploy.py production 8080
+
+print(sys.argv[0])   # deploy.py      (script name)
+print(sys.argv[1])   # production     (1st argument)
+print(sys.argv[2])   # 8080           (2nd argument)
+print(len(sys.argv)) # 3              (total arguments)
+
+Real DevOps Use:
+
+# python deploy.py production
+environment = sys.argv[1]
+
+if environment not in ['production', 'staging']:
+    print("Invalid environment!")
+    sys.exit(1)
+
+print(f"Deploying to {environment}...")
+-------------------------------------------------------------------------------------------
+2. Exit Script
+
+# Exit successfully
+sys.exit(0)    # 0 = success
+
+# Exit with error
+sys.exit(1)    # 1 = failed
+
+# Exit with message
+sys.exit("Something went wrong!")
+
+Real DevOps Use:
+
+import os, sys
+
+if not os.path.exists('/var/www/app'):
+    print("ERROR: App folder not found!")
+    sys.exit(1)   # Stop script immediately
+
+print("Folder found, continuing...")
+-------------------------------------------------------------------------------------------
+3. Output – stdout & stderr
+
+# Normal output
+sys.stdout.write("Deployment started\n")
+
+# Error output (shows in red in terminal)
+sys.stderr.write("ERROR: Connection failed!\n")
+
+# Flush output immediately (useful in pipelines)
+sys.stdout.flush()
+
+Real DevOps Use:
+
+# Separate normal logs from error logs
+sys.stdout.write("INFO: Server started\n")
+sys.stderr.write("ERROR: Port already in use!\n")
+-------------------------------------------------------------------------------------------
+4. Python Version Check
+
+# Get Python version
+print(sys.version)
+# Output: 3.11.2 (main, Mar 13 2023)
+
+print(sys.version_info)
+# Output: sys.version_info(major=3, minor=11, micro=2)
+
+print(sys.version_info.major)  # 3
+print(sys.version_info.minor)  # 11
+
+Real DevOps Use:
+
+# Make sure correct Python version is used
+if sys.version_info.major < 3:
+    print("ERROR: Python 3 required!")
+    sys.exit(1)
+
+if sys.version_info.minor < 8:
+    print("ERROR: Python 3.8+ required!")
+    sys.exit(1)
+
+print("Python version OK ✅")
+-------------------------------------------------------------------------------------------
+5. Platform / OS Detection
+
+print(sys.platform)
+# Output:
+# 'linux'   → Linux
+# 'darwin'  → Mac
+# 'win32'   → Windows
+
+Real DevOps Use:
+
+# Run different commands based on OS
+if sys.platform == 'linux':
+    subprocess.run(['systemctl', 'restart', 'nginx'])
+elif sys.platform == 'darwin':
+    subprocess.run(['brew', 'services', 'restart', 'nginx'])
+elif sys.platform == 'win32':
+    subprocess.run(['net', 'stop', 'nginx'])
+-------------------------------------------------------------------------------------------
+6. Module & Path Management
+
+# See all module search paths
+print(sys.path)
+
+# Add custom folder to search path
+sys.path.append('/home/user/mymodules')
+
+# See all currently imported modules
+print(sys.modules)
+
+# Check if a module is imported
+print('os' in sys.modules)   # True or False
+
+Real DevOps Use:
+
+# Add custom scripts folder to path
+sys.path.append('/opt/devops/scripts')
+
+# Now you can import from that folder
+import my_deploy_script
+-------------------------------------------------------------------------------------------
+7. System Limits & Info
+
+# Maximum integer size
+print(sys.maxsize)
+# Output: 9223372036854775807
+
+# Maximum recursion limit
+print(sys.getrecursionlimit())
+# Output: 1000
+
+# Change recursion limit
+sys.setrecursionlimit(5000)
+
+# Get byte order (little/big endian)
+print(sys.byteorder)
+# Output: 'little'
+
+# Get size of object in bytes
+print(sys.getsizeof([1, 2, 3]))
+# Output: 88
+-------------------------------------------------------------------------------------------
+8. Executable & Install Paths
+
+# Path of current Python executable
+print(sys.executable)
+# Output: /usr/bin/python3
+
+# Python installation prefix
+print(sys.prefix)
+# Output: /usr
+
+# Path of currently running script
+print(sys.argv[0])
+# Output: deploy.py
+
+Real DevOps Use:
+
+# Use same Python that's running the script
+import subprocess
+subprocess.run([sys.executable, 'another_script.py'])
+-------------------------------------------------------------------------------------------
+9. Exception Handling Info
+
+try:
+    x = 1 / 0
+except:
+    # Get current exception details
+    exc_type, exc_value, exc_tb = sys.exc_info()
+    print(f"Error Type: {exc_type}")
+    print(f"Error Value: {exc_value}")
+-------------------------------------------------------------------------------------------
+10. Real DevOps Script – All sys Together
+
+import sys
+import os
+import subprocess
+
+# Step 1 - Check Python version
+if sys.version_info.minor < 8:
+    sys.stderr.write("ERROR: Python 3.8+ required!\n")
+    sys.exit(1)
+
+# Step 2 - Check arguments
+if len(sys.argv) < 2:
+    sys.stderr.write("Usage: python deploy.py <environment>\n")
+    sys.exit(1)
+
+env = sys.argv[1]
+
+# Step 3 - Check platform
+if sys.platform != 'linux':
+    sys.stderr.write("ERROR: Linux only!\n")
+    sys.exit(1)
+
+# Step 4 - Deploy
+sys.stdout.write(f"Deploying to {env}...\n")
+subprocess.run(['git', 'pull', 'origin', 'main'], check=True)
+subprocess.run(['systemctl', 'restart', 'myapp'], check=True)
+
+sys.stdout.write("Deployment successful! ✅\n")
+sys.exit(0)
+
+-------------------------------------------------------------------------------------------
+
+💡 Most Used in DevOps
+
+1. sys.argv        →  Pass environment/arguments to script
+2. sys.exit(1)     →  Stop script on error
+3. sys.platform    →  Detect OS and run right commands
+4. sys.version_info →  Check Python version
+5. sys.stderr      →  Print error messages
+6. sys.executable  →  Use correct Python path
