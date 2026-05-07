@@ -654,6 +654,15 @@ sys.exit(0)
 
 -------------------------------------------------------------------------------------------
 
+💡 Most Used in DevOps
+
+1. sys.argv        →  Pass environment/arguments to script
+2. sys.exit(1)     →  Stop script on error
+3. sys.platform    →  Detect OS and run right commands
+4. sys.version_info →  Check Python version
+5. sys.stderr      →  Print error messages
+6. sys.executable  →  Use correct Python path
+
 
 
 
