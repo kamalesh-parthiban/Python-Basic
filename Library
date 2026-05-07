@@ -1,0 +1,130 @@
+✅ Must-Learn First (Beginner Priority)
+
+1. os, sys, subprocess   → System automation
+2. requests              → API interactions
+3. boto3                 → Cloud (AWS)
+4. pyyaml                → Config files
+5. paramiko              → SSH automation
+6. docker                → Container management
+7. pytest                → Testing your scripts
+
+1. os, sys, subprocess   → System automation
+
+import os            -- Think of it as: "Talking to your computer's file system and environment"
+import subprocess    -- Run Shell Commands from Python
+import sys           -- Think of it as: "Controlling how your Python script runs"
+
+In DevOps — use os for file/path/env tasks and subprocess for running tools like git, docker, kubectl, systemctl! 🚀
+----------------
+os
+---------------
+
+📊 Summary Table
+
+Category            | Key Functions
+--------------------|---------------------------------------------------------
+Directories         | getcwd, chdir, listdir, makedirs, rmdir
+Files               | remove, rename, path.exists, path.getsize
+Environment Vars    | environ, getenv, environ.get
+Paths               | path.join, path.basename, path.dirname
+Walk Folders        | os.walk
+Permissions         | chmod, chown, stat
+System Info         | cpu_count, getpid, getlogin
+Symlinks            | symlink, readlink
+
+They come preinstalled with Python — no pip install needed.
+
+📁 1. Directory (Folder) Operations
+
+import os
+
+os.getcwd()                        # Get current directory
+os.chdir('/home/user')             # Change directory
+os.listdir('/home/user')           # List files & folders
+os.makedirs('/home/user/a/b/c')    # Create nested folders
+os.mkdir('/home/user/newfolder')   # Create single folder
+os.rmdir('/home/user/emptyfolder') # Delete empty folder
+os.removedirs('/home/user/a/b/c')  # Delete nested folders
+os.path.exists('/home/user')       # Check if folder exists
+os.path.isdir('/home/user')        # Check if it's a directory
+
+2. File Operations
+
+os.remove('file.txt')              # Delete a file
+os.rename('old.txt', 'new.txt')    # Rename a file
+os.path.exists('file.txt')         # Check if file exists
+os.path.isfile('file.txt')         # Check if it's a file
+os.path.getsize('file.txt')        # Get file size in bytes
+os.path.abspath('file.txt')        # Get full path of file
+
+🌍 3. Environment Variables
+
+os.environ                         # Show ALL environment variables
+os.environ.get('DB_PASSWORD')      # Read an env variable
+os.environ['DB_PASSWORD']          # Read (throws error if missing)
+os.environ['NEW_VAR'] = 'value'    # Set an env variable
+os.getenv('DB_HOST', 'localhost')  # Read with default value
+
+Real DevOps Use:
+
+# Read database credentials from environment
+db_host = os.getenv('DB_HOST', 'localhost')
+db_pass = os.environ.get('DB_PASSWORD')
+
+if not db_pass:
+    print("ERROR: DB_PASSWORD not set!")
+    sys.exit(1)
+
+🔍 4. Path Operations (os.path)
+
+os.path.join('/home', 'user', 'file.txt')  # Join paths safely
+# Output: /home/user/file.txt
+
+os.path.basename('/home/user/file.txt')    # Get filename
+# Output: file.txt
+
+os.path.dirname('/home/user/file.txt')     # Get folder path
+# Output: /home/user
+
+os.path.split('/home/user/file.txt')       # Split path & file
+# Output: ('/home/user', 'file.txt')
+
+os.path.splitext('file.txt')               # Split name & extension
+# Output: ('file', '.txt')
+
+os.path.expanduser('~/documents')          # Expand ~ to home dir
+# Output: /home/user/documents
+
+Real DevOps Use — Find all log files:
+
+for root, dirs, files in os.walk('/var/log'):
+    for file in files:
+        if file.endswith('.log'):
+            print(os.path.join(root, file))
+
+🔐 6. File Permissions
+
+os.chmod('script.sh', 0o755)       # Make file executable
+os.chown('file.txt', 1000, 1000)   # Change owner (uid, gid)
+os.stat('file.txt')                # Get file details & permissions
+
+Real DevOps Use:
+
+# Make deploy script executable
+os.chmod('/opt/deploy.sh', 0o755)
+
+🖥️ 7. System Information
+
+os.name                            # OS type ('nt'=Windows, 'posix'=Linux/Mac)
+os.uname()                         # System info (Linux only)
+os.getpid()                        # Current process ID
+os.getppid()                       # Parent process ID
+os.getlogin()                      # Current logged-in user
+os.cpu_count()                     # Number of CPUs
+
+🔗 8. Symbolic Links
+
+os.symlink('original.txt', 'link.txt')   # Create symbolic link
+os.readlink('link.txt')                   # Read where link points
+os.path.islink('link.txt')               # Check if it's a symlink
+
