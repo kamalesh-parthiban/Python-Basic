@@ -1,0 +1,555 @@
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+File Handling = Read & Write files from Python!
+Config files, log files, reports & backups — all need file handling in DevOps! 🚀
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Task            Code
+----------------------------------------------------------------
+Read file       file.read()
+
+Read lines      file.readlines()
+
+Write file      file.write('text')
+
+Append file     open('file', 'a')
+
+Check exists    os.path.exists()
+
+Copy file       shutil.copy()
+
+Move file       shutil.move()
+
+Delete file     os.remove()
+
+List files      os.listdir()
+
+Walk dirs       os.walk()
+
+Read JSON       json.load(file)
+
+Write JSON      json.dump(data, file)
+
+Read YAML       yaml.safe_load(file)
+
+Read CSV        csv.reader(file)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+📊 File Modes Summary
+
+Mode    Meaning         Creates?     Overwrites?
+--------------------------------------------------------
+r       Read only       ❌           ❌
+
+w       Write           ✅           ✅
+
+a       Append          ✅           ❌
+
+x       Create new      ✅           ❌ Error
+
+r+      Read & Write    ❌           ❌
+
+rb      Read binary     ❌           ❌
+
+wb      Write binary    ✅           ✅
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+🤔 What is File Handling?
+Think of File Handling as a Filing Cabinet 🗄️
+
+Filing Cabinet:
+→ Open drawer      (open file)
+→ Read documents   (read file)
+→ Write documents  (write file)
+→ Close drawer     (close file)
+
+File Handling:
+→ open()   - Open file
+→ read()   - Read content
+→ write()  - Write content
+→ close()  - Close file
+
+File Handling is used for:
+
+✅ Read config files
+✅ Write log files
+✅ Process CSV data
+✅ Generate reports
+✅ Read YAML/JSON files
+✅ Backup & archive files
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. Open & Close File
+
+# Open file
+file = open('app.log', 'r')     # r = read
+
+# Do something with file
+content = file.read()
+
+# Always close file!
+file.close()
+
+# Better way - auto closes!
+with open('app.log', 'r') as file:
+    content = file.read()
+# File automatically closed here!
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+2. File Modes
+
+# Different ways to open file
+
+open('file.txt', 'r')   # Read only
+open('file.txt', 'w')   # Write (creates/overwrites)
+open('file.txt', 'a')   # Append (add to end)
+open('file.txt', 'x')   # Create new (error if exists)
+open('file.txt', 'r+')  # Read and write
+
+# Binary mode (for images, zip files)
+open('file.zip', 'rb')  # Read binary
+open('file.zip', 'wb')  # Write binary
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+3. Read File
+
+# Read entire file
+with open('app.log', 'r') as file:
+    content = file.read()
+    print(content)
+
+# Read line by line
+with open('app.log', 'r') as file:
+    for line in file:
+        print(line.strip())
+
+# Read all lines into list
+with open('app.log', 'r') as file:
+    lines = file.readlines()
+    print(lines)
+    # ['line1\n', 'line2\n', 'line3\n']
+
+# Read single line
+with open('app.log', 'r') as file:
+    first_line = file.readline()
+    print(first_line)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+4. Write File
+
+# Write to file (overwrites existing!)
+with open('app.log', 'w') as file:
+    file.write("Deployment started!\n")
+    file.write("Building image...\n")
+    file.write("Deployment done!\n")
+
+# Append to file (adds to end)
+with open('app.log', 'a') as file:
+    file.write("New log entry!\n")
+
+# Write multiple lines
+lines = [
+    "Server started!\n",
+    "Port: 8080\n",
+    "Status: running\n"
+]
+with open('app.log', 'w') as file:
+    file.writelines(lines)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+5. Check File Exists
+
+import os
+
+# Check if file exists
+if os.path.exists('config.yaml'):
+    print("Config file found!")
+else:
+    print("Config file missing!")
+
+# Check if it's a file
+if os.path.isfile('config.yaml'):
+    print("It's a file!")
+
+# Check if it's a directory
+if os.path.isdir('/var/log'):
+    print("It's a directory!")
+
+# Get file size
+size = os.path.getsize('app.log')
+print(f"File size: {size} bytes")
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+6. File & Directory Operations
+
+import os
+import shutil
+
+# Create directory
+os.makedirs('/tmp/backup', exist_ok=True)
+
+# Copy file
+shutil.copy('app.log', '/tmp/backup/app.log')
+
+# Move file
+shutil.move('app.log', '/tmp/backup/app.log')
+
+# Rename file
+os.rename('old_name.txt', 'new_name.txt')
+
+# Delete file
+os.remove('old_file.txt')
+
+# Delete directory
+shutil.rmtree('/tmp/old_backup')
+
+# List files in directory
+files = os.listdir('/var/log')
+for file in files:
+    print(file)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+7. Read & Write JSON
+
+import json
+
+# Write JSON file
+config = {
+    'app':      'myapp',
+    'port':     8080,
+    'debug':    False,
+    'servers':  ['web1', 'web2']
+}
+
+with open('config.json', 'w') as file:
+    json.dump(config, file, indent=4)
+print("JSON file written! ✅")
+
+# Read JSON file
+with open('config.json', 'r') as file:
+    config = json.load(file)
+
+print(config['app'])        # myapp
+print(config['port'])       # 8080
+print(config['servers'])    # ['web1', 'web2']
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+8. Read & Write YAML
+
+import yaml
+
+# Write YAML file
+config = {
+    'app':      'myapp',
+    'port':     8080,
+    'database': {
+        'host': 'localhost',
+        'port': 5432
+    }
+}
+
+with open('config.yaml', 'w') as file:
+    yaml.dump(config, file, default_flow_style=False)
+print("YAML file written! ✅")
+
+# Read YAML file
+with open('config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+
+print(config['app'])                # myapp
+print(config['database']['host'])   # localhost
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+9. Read CSV File
+
+import csv
+
+# Write CSV file
+data = [
+    ['server', 'ip', 'status'],
+    ['web1', '192.168.1.1', 'running'],
+    ['web2', '192.168.1.2', 'stopped'],
+    ['web3', '192.168.1.3', 'running']
+]
+
+with open('servers.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerows(data)
+
+# Read CSV file
+with open('servers.csv', 'r') as file:
+    reader = csv.reader(file)
+    for row in reader:
+        print(row)
+# ['server', 'ip', 'status']
+# ['web1', '192.168.1.1', 'running']
+
+# Read CSV as dictionary
+with open('servers.csv', 'r') as file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        print(f"Server: {row['server']}")
+        print(f"IP:     {row['ip']}")
+        print(f"Status: {row['status']}")
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+10. Error Handling with Files
+
+try:
+    with open('config.json', 'r') as file:
+        content = file.read()
+
+except FileNotFoundError:
+    print("ERROR: File not found!")
+
+except PermissionError:
+    print("ERROR: No permission to read file!")
+
+except IsADirectoryError:
+    print("ERROR: That is a directory not a file!")
+
+except Exception as e:
+    print(f"ERROR: {e}")
+
+11. Real DevOps Use Cases
+✅ Read Config File & Deploy
+
+import json
+import sys
+import subprocess
+
+# Read deployment config
+with open('deploy_config.json', 'r') as file:
+    config = json.load(file)
+
+app_name    = config['app_name']
+environment = config['environment']
+servers     = config['servers']
+commands    = config['deploy_commands']
+
+print(f"Deploying {app_name} to {environment}")
+
+for server in servers:
+    print(f"\nDeploying to {server}...")
+    for cmd in commands:
+        subprocess.run(cmd.split(), check=True)
+    print(f"✅ {server} done!")
+
+✅ Write Deployment Log
+
+import datetime
+
+def write_deploy_log(message, level='INFO'):
+    timestamp   = datetime.datetime.now().strftime(
+        '%Y-%m-%d %H:%M:%S'
+    )
+    log_entry   = f"[{timestamp}] [{level}] {message}\n"
+
+    # Write to log file
+    with open('deployment.log', 'a') as file:
+        file.write(log_entry)
+
+    print(log_entry.strip())
+
+# Use in deployment
+write_deploy_log("Deployment started")
+write_deploy_log("Pulling latest code...")
+write_deploy_log("Building Docker image...")
+write_deploy_log("ERROR: Build failed!", level='ERROR')
+write_deploy_log("Deployment finished")
+
+✅ Parse Application Logs
+
+import os
+
+def parse_logs(log_file):
+    errors      = []
+    warnings    = []
+    total_lines = 0
+
+    if not os.path.exists(log_file):
+        print(f"Log file not found: {log_file}")
+        return
+
+    with open(log_file, 'r') as file:
+        for line in file:
+            line        = line.strip()
+            total_lines += 1
+
+            if 'ERROR' in line:
+                errors.append(line)
+            elif 'WARNING' in line:
+                warnings.append(line)
+
+    print(f"Total lines:  {total_lines}")
+    print(f"Errors:       {len(errors)}")
+    print(f"Warnings:     {len(warnings)}")
+
+    if errors:
+        print("\nErrors found:")
+        for error in errors[:5]:    # Show first 5
+            print(f"  {error}")
+
+parse_logs('/var/log/app.log')
+
+✅ Backup Log Files
+
+import os
+import shutil
+import datetime
+
+def backup_logs(log_dir, backup_dir):
+    # Create backup directory
+    date        = datetime.datetime.now().strftime('%Y%m%d')
+    backup_path = os.path.join(backup_dir, date)
+    os.makedirs(backup_path, exist_ok=True)
+
+    backed_up   = 0
+
+    # Find all log files
+    for root, dirs, files in os.walk(log_dir):
+        for filename in files:
+            if filename.endswith('.log'):
+                src  = os.path.join(root, filename)
+                dest = os.path.join(backup_path, filename)
+
+                shutil.copy(src, dest)
+                backed_up += 1
+                print(f"✅ Backed up: {filename}")
+
+    print(f"\nTotal backed up: {backed_up} files")
+    print(f"Backup location: {backup_path}")
+    return backed_up
+
+backup_logs('/var/log', '/backup')
+
+✅ Generate Server Report
+
+import datetime
+import subprocess
+
+def generate_server_report(output_file):
+    timestamp   = datetime.datetime.now().strftime(
+        '%Y-%m-%d %H:%M:%S'
+    )
+
+    with open(output_file, 'w') as file:
+        # Write header
+        file.write("=" * 50 + "\n")
+        file.write(f"SERVER REPORT - {timestamp}\n")
+        file.write("=" * 50 + "\n\n")
+
+        # Disk usage
+        result = subprocess.run(
+            ['df', '-h'],
+            capture_output=True, text=True
+        )
+        file.write("DISK USAGE:\n")
+        file.write(result.stdout + "\n")
+
+        # Memory usage
+        result = subprocess.run(
+            ['free', '-h'],
+            capture_output=True, text=True
+        )
+        file.write("MEMORY USAGE:\n")
+        file.write(result.stdout + "\n")
+
+        # Running processes
+        result = subprocess.run(
+            ['ps', 'aux', '--sort=-%cpu'],
+            capture_output=True, text=True
+        )
+        file.write("TOP PROCESSES:\n")
+        # Write first 10 lines only
+        lines = result.stdout.split('\n')[:10]
+        file.write('\n'.join(lines) + "\n")
+
+    print(f"✅ Report saved to {output_file}")
+
+generate_server_report('server_report.txt')
+
+✅ Update Config File
+
+import json
+import sys
+
+def update_config(config_file, key, value):
+    # Read existing config
+    with open(config_file, 'r') as file:
+        config = json.load(file)
+
+    # Update value
+    old_value       = config.get(key)
+    config[key]     = value
+
+    # Write back
+    with open(config_file, 'w') as file:
+        json.dump(config, file, indent=4)
+
+    print(f"✅ Updated {key}: {old_value} → {value}")
+
+def update_nested_config(config_file, section, key, value):
+    with open(config_file, 'r') as file:
+        config = json.load(file)
+
+    if section not in config:
+        config[section] = {}
+
+    config[section][key] = value
+
+    with open(config_file, 'w') as file:
+        json.dump(config, file, indent=4)
+
+    print(f"✅ Updated {section}.{key} = {value}")
+
+# Use functions
+update_config('config.json', 'port', 9090)
+update_config('config.json', 'debug', False)
+update_nested_config('config.json', 'database',
+                     'host', 'prod-db.example.com')
+
+✅ Process Multiple Config Files
+
+import os
+import yaml
+
+def process_all_configs(config_dir):
+    configs = {}
+
+    # Read all yaml files in directory
+    for filename in os.listdir(config_dir):
+        if filename.endswith('.yaml') or \
+           filename.endswith('.yml'):
+
+            filepath = os.path.join(config_dir, filename)
+
+            with open(filepath, 'r') as file:
+                config = yaml.safe_load(file)
+
+            app_name        = filename.replace('.yaml', '')
+            configs[app_name] = config
+            print(f"✅ Loaded: {filename}")
+
+    return configs
+
+# Use function
+all_configs = process_all_configs('/etc/myapp/configs')
+
+for app, config in all_configs.items():
+    print(f"\nApp: {app}")
+    print(f"Port: {config.get('port')}")
+    print(f"Env:  {config.get('environment')}")
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. Read config files        →  json, yaml configs
+2. Write deployment logs    →  Track all actions
+3. Parse application logs   →  Find errors & warnings
+4. Backup log files         →  Copy logs to backup
+5. Generate reports         →  Server health reports
+6. Update config files      →  Change settings
+7. Process multiple files   →  Batch operations
+8. Read CSV inventory       →  Server lists
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
