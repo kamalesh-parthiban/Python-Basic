@@ -1,6 +1,6 @@
 Must Learn (High Priority)
 
-1. os, sys, subprocess   → System automation
+1. os, sys, subprocess   → System automation          -- Modules (built into Python)
 2. requests              → API interactions
 3. boto3                 → Cloud (AWS)
 4. pyyaml                → Config files
@@ -11,9 +11,9 @@ Must Learn (High Priority)
 Good to Know (Medium Priority)
 
 8. kubernetes       → manage K8s resources
-9. logging         → proper log management
-10. argparse        → command line tools
-11. re              → regex for log parsing
+9. logging         → proper log management         -- Modules (built into Python)
+10. argparse        → command line tools           -- Modules (built into Python)
+11. re              → regex for log parsing        -- Modules (built into Python)
 
 Bonus (Nice to Have)   -- Ignore now
 
@@ -140,4 +140,23 @@ For Kubernetes + DevOps career:
 - Then Kubernetes SDKs & boto3
 
 That combination is highly valuable in DevOps/SRE roles.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Python Standard Library Modules (built into Python)
+---------------------------------------------------
+1. os
+2. sys
+3. subprocess
+4. logging
+5. argparse
+6. re
+
+Third-Party Libraries (need pip install)
+----------------------------------------
+1. requests
+2. boto3
+3. pyyaml
+4. paramiko
+5. docker
+6. pytest
+7. kubernetes
 
