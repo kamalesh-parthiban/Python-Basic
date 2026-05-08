@@ -14,6 +14,14 @@ Good to Know (Medium Priority)
 9. logging         → proper log management
 10. argparse        → command line tools
 11. re              → regex for log parsing
+
+Bonus (Nice to Have)   -- Ignore now
+
+12. schedule        → run scripts on schedule
+13. smtplib         → send email alerts
+14. slack_sdk       → send Slack alerts
+15. prometheus_client→ expose metrics
+16. fabric          → remote server automation
 -----------------------------------------------------------------------------------------------------
 Module
 → a single Python file
