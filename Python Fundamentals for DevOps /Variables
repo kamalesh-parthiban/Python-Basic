@@ -1,0 +1,416 @@
+-------------------------------------------------------------------------------------------------------------------------------
+Variable = Storage box for your data!
+Every single line of code in DevOps uses variables to store and use data! 🚀
+-------------------------------------------------------------------------------------------------------------------------------
+Variable Types Summary
+
+Type         Example                    Use in DevOps
+----------------------------------------------------------------
+String       env = 'production'         Server names, configs
+
+Integer      port = 8080                Ports, replicas, counts
+
+Float        timeout = 30.5             Timeouts, percentages
+
+Boolean      debug = True               Flags, status checks
+
+List         servers = ['web1']         Collections
+
+Dictionary   config = {'port': 80}      Configurations
+
+None         result = None              Empty/unset values
+------------------------------------------------------------------------------------------------------------------------------
+Summary Table
+
+Task               Code
+------------------------------------------------
+Create             name = 'myapp'
+
+Change             name = 'newapp'
+
+Increment          count += 1
+
+Decrement          count -= 1
+
+Multiple assign    a, b = 1, 2
+
+Swap               a, b = b, a
+
+Type check         type(variable)
+
+Type convert       int(), str(), float()
+
+Constant           MAX_RETRY = 3
+
+Global             global variable_name
+------------------------------------------------------------------------------------------------------------------------------
+
+🤔 What is a Variable?
+Think of Variable as a Storage Box 📦
+
+Box has:
+→ A NAME (label on box)
+→ A VALUE (what's inside box)
+
+Variable has:
+→ A NAME  (what you call it)
+→ A VALUE (what it stores)
+
+# Creating a variable
+name = 'myapp'
+#  ↑      ↑
+# NAME   VALUE
+
+port = 8080
+#  ↑     ↑
+# NAME  VALUE
+------------------------------------------------------------------------------------------------------------------------------
+1. Create Variables
+
+# String variable
+app_name    = 'myapp'
+environment = 'production'
+server_ip   = '192.168.1.1'
+
+# Number variable
+port        = 8080
+replicas    = 3
+cpu_usage   = 85
+
+# Decimal variable
+timeout     = 30.5
+version     = 2.0
+
+# Boolean variable
+is_running  = True
+debug_mode  = False
+
+# None variable (empty)
+result      = None
+------------------------------------------------------------------------------------------------------------------------------
+2. Variable Rules
+
+# ✅ Valid variable names
+myapp       = 'app'
+my_app      = 'app'     # underscore allowed
+myApp       = 'app'     # camelCase allowed
+app123      = 'app'     # numbers allowed (not at start)
+_app        = 'app'     # underscore at start allowed
+
+# ❌ Invalid variable names
+123app      = 'app'     # ERROR - cannot start with number
+my-app      = 'app'     # ERROR - hyphen not allowed
+my app      = 'app'     # ERROR - space not allowed
+class       = 'app'     # ERROR - reserved keyword
+
+# ✅ Good naming convention (use underscore)
+server_ip   = '192.168.1.1'
+db_password = 'secret'
+max_retries = 3
+------------------------------------------------------------------------------------------------------------------------------
+3. Variable Types
+
+# String - text
+name    = 'myapp'
+print(type(name))       # <class 'str'>
+
+# Integer - whole number
+port    = 8080
+print(type(port))       # <class 'int'>
+
+# Float - decimal number
+timeout = 30.5
+print(type(timeout))    # <class 'float'>
+
+# Boolean - True or False
+debug   = True
+print(type(debug))      # <class 'bool'>
+
+# List - collection
+servers = ['web1', 'web2']
+print(type(servers))    # <class 'list'>
+
+# Dictionary - key value
+config  = {'host': 'localhost'}
+print(type(config))     # <class 'dict'>
+
+# None - empty
+result  = None
+print(type(result))     # <class 'NoneType'>
+------------------------------------------------------------------------------------------------------------------------------
+4. Change Variable Value
+
+# Variables can change!
+status = 'stopped'
+print(status)       # stopped
+
+status = 'starting'
+print(status)       # starting
+
+status = 'running'
+print(status)       # running
+
+# Number changes
+replicas = 1
+print(replicas)     # 1
+
+replicas = replicas + 2
+print(replicas)     # 3
+
+replicas += 2       # Short form
+print(replicas)     # 5
+
+replicas -= 1       # Subtract
+print(replicas)     # 4
+
+replicas *= 2       # Multiply
+print(replicas)     # 8
+
+replicas //= 2      # Divide
+print(replicas)     # 4
+------------------------------------------------------------------------------------------------------------------------------
+5. Multiple Assignment
+
+# Assign same value to multiple variables
+web1 = web2 = web3 = 'running'
+print(web1)     # running
+print(web2)     # running
+print(web3)     # running
+
+# Assign multiple values at once
+host, port, user = 'localhost', 8080, 'ubuntu'
+print(host)     # localhost
+print(port)     # 8080
+print(user)     # ubuntu
+
+# Swap variables
+a = 'web1'
+b = 'web2'
+a, b = b, a     # Swap!
+print(a)        # web2
+print(b)        # web1
+------------------------------------------------------------------------------------------------------------------------------
+6. Type Conversion
+
+# Convert between types
+
+# String to Integer
+port_str = '8080'
+port_int = int(port_str)
+print(port_int + 1)     # 8081
+
+# Integer to String
+port     = 8080
+port_str = str(port)
+print('Port: ' + port_str)  # Port: 8080
+
+# String to Float
+cpu_str  = '85.5'
+cpu      = float(cpu_str)
+print(cpu + 1.5)        # 87.0
+
+# Integer to Boolean
+print(bool(0))          # False
+print(bool(1))          # True
+print(bool(-1))         # True
+
+# String to Boolean
+print(bool(''))         # False
+print(bool('hello'))    # True
+------------------------------------------------------------------------------------------------------------------------------
+7. Constants – Variables That Don't Change
+
+# Python has no built-in constants
+# Convention: USE ALL CAPS for constants
+
+MAX_RETRIES     = 3
+TIMEOUT         = 30
+DEFAULT_PORT    = 8080
+DB_HOST         = 'localhost'
+AWS_REGION      = 'us-east-1'
+
+# These SHOULD NOT change
+# but Python doesn't force it
+# It's just a convention to use CAPS
+------------------------------------------------------------------------------------------------------------------------------
+8. Global vs Local Variables
+
+# Global variable - available everywhere
+server_ip = '192.168.1.1'
+
+def deploy():
+    # Local variable - only inside function
+    status = 'deploying'
+    print(f"Deploying to {server_ip}")  # Can use global
+    print(f"Status: {status}")          # Can use local
+
+deploy()
+print(server_ip)    # ✅ Works - global
+print(status)       # ❌ ERROR - local variable!
+
+# Use global keyword to modify global variable
+count = 0
+
+def increment():
+    global count    # Tell Python to use global count
+    count += 1
+
+increment()
+increment()
+print(count)        # 2
+------------------------------------------------------------------------------------------------------------------------------
+9. Real DevOps Use Cases
+✅ Store Configuration
+
+import os
+
+# Store all config in variables
+APP_NAME     = 'myapp'
+ENVIRONMENT  = os.environ.get('ENV', 'staging')
+DB_HOST      = os.environ.get('DB_HOST', 'localhost')
+DB_PORT      = int(os.environ.get('DB_PORT', '5432'))
+DB_NAME      = os.environ.get('DB_NAME', 'mydb')
+DEBUG        = ENVIRONMENT != 'production'
+REPLICAS     = 5 if ENVIRONMENT == 'production' else 2
+PORT         = 80 if ENVIRONMENT == 'production' else 8080
+
+print(f"App:      {APP_NAME}")
+print(f"Env:      {ENVIRONMENT}")
+print(f"DB:       {DB_HOST}:{DB_PORT}/{DB_NAME}")
+print(f"Debug:    {DEBUG}")
+print(f"Replicas: {REPLICAS}")
+print(f"Port:     {PORT}")
+
+✅ Track Deployment Status
+
+import datetime
+
+# Deployment tracking variables
+deployment_start    = datetime.datetime.now()
+deployment_success  = False
+deployment_error    = None
+deployed_servers    = []
+failed_servers      = []
+total_servers       = 5
+
+servers = ['web1', 'web2', 'web3', 'web4', 'web5']
+
+for server in servers:
+    try:
+        print(f"Deploying to {server}...")
+        # deploy logic
+        deployed_servers.append(server)
+
+    except Exception as e:
+        failed_servers.append(server)
+        deployment_error = str(e)
+
+# Calculate results
+deployment_end      = datetime.datetime.now()
+deployment_duration = (deployment_end - deployment_start).seconds
+deployment_success  = len(failed_servers) == 0
+
+print(f"\nDeployment Report:")
+print(f"Success:   {deployment_success}")
+print(f"Duration:  {deployment_duration}s")
+print(f"Deployed:  {len(deployed_servers)}/{total_servers}")
+print(f"Failed:    {len(failed_servers)}")
+
+✅ Server Health Variables
+
+import subprocess
+
+# Health check variables
+server          = '192.168.1.1'
+is_online       = False
+disk_usage      = 0
+memory_usage    = 0
+cpu_usage       = 0
+health_status   = 'unknown'
+
+# Check disk
+result      = subprocess.run(
+    ['df', '-h', '/'],
+    capture_output=True, text=True
+)
+disk_usage  = int(
+    result.stdout.split('\n')[1].split()[4].replace('%','')
+)
+
+# Check memory
+result          = subprocess.run(
+    ['free', '-m'],
+    capture_output=True, text=True
+)
+mem_line        = result.stdout.split('\n')[1].split()
+total_mem       = int(mem_line[1])
+used_mem        = int(mem_line[2])
+memory_usage    = int((used_mem / total_mem) * 100)
+
+# Determine health status
+if disk_usage > 90 or memory_usage > 90:
+    health_status = 'critical'
+elif disk_usage > 80 or memory_usage > 80:
+    health_status = 'warning'
+else:
+    health_status = 'healthy'
+
+print(f"Server:  {server}")
+print(f"Disk:    {disk_usage}%")
+print(f"Memory:  {memory_usage}%")
+print(f"Status:  {health_status}")
+
+✅ AWS Resource Counter
+
+import boto3
+
+ec2 = boto3.client('ec2', region_name='us-east-1')
+
+# Counter variables
+total_instances     = 0
+running_instances   = 0
+stopped_instances   = 0
+total_cost_estimate = 0.0
+
+# Instance costs per hour
+COST_PER_HOUR = {
+    't2.micro':  0.0116,
+    't2.small':  0.023,
+    't2.medium': 0.0464,
+    't3.large':  0.0832
+}
+
+response = ec2.describe_instances()
+
+for reservation in response['Reservations']:
+    for instance in reservation['Instances']:
+        total_instances += 1
+        state           = instance['State']['Name']
+        instance_type   = instance['InstanceType']
+
+        if state == 'running':
+            running_instances   += 1
+            hourly_cost         = COST_PER_HOUR.get(
+                instance_type, 0
+            )
+            total_cost_estimate += hourly_cost
+
+        elif state == 'stopped':
+            stopped_instances += 1
+
+print(f"Total:    {total_instances}")
+print(f"Running:  {running_instances}")
+print(f"Stopped:  {stopped_instances}")
+print(f"Est Cost: ${total_cost_estimate:.4f}/hour")
+------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. Store environment name       →  env = 'production'
+2. Store server configs         →  host, port, user
+3. Track deployment status      →  success = False
+4. Count servers/errors         →  count = 0
+5. Store command output         →  result = subprocess.run()
+6. Read from environment vars   →  os.environ.get()
+7. Store API responses          →  response = requests.get()
+8. Constants for config         →  MAX_RETRIES = 3
+
