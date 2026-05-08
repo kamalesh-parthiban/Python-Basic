@@ -1,0 +1,9 @@
+-------------------------------------------------------------------------------------------------------------------------------------------
+Think of a for loop like a conveyor belt 🏭
+Each item on the belt gets processed one by one — until the belt is empty.
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+for item in collection:
+    # do something with each item
+
+
