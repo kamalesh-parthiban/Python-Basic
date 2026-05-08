@@ -8,6 +8,13 @@
 6. docker                → Container management
 7. pytest                → Testing your scripts
 
+Good to Know (Medium Priority)
+
+8. kubernetes       → manage K8s resources
+9. logging         → proper log management
+10. argparse        → command line tools
+11. re              → regex for log parsing
+
 Module
 → a single Python file
 
@@ -19,23 +26,34 @@ Python Module            Purpose                     Bash Alternative
 -----------------------------------------------------------------------------
 1. os, sys, subprocess   System automation           shell commands
 
-2. requests              API interactions            curl / wget
+2. requests              REST API calls                   curl / wget
 
-3. boto3                 AWS cloud automation        AWS CLI
+3. boto3                 AWS cloud automation             AWS CLI
 
-4. pyyaml                YAML config handling        yq / grep / sed
+4. json                  JSON parsing                     jq
 
-5. paramiko              SSH automation              ssh / scp / rsync
+5. pyyaml                YAML config handling             yq / grep / sed
 
-6. docker                Container management        docker CLI
+6. paramiko              SSH automation                   ssh / scp / rsync
 
-7. pytest                Testing scripts             bats / shell testing
+7. docker                Docker container management      docker CLI
+
+8. kubernetes            Kubernetes automation            kubectl
+
+9. logging              Log management                   echo / logger
+
+10. argparse             Command line arguments           getopts
+
+11. re                   Regex & log parsing              grep / sed / awk
 
 ----------------------------------------------------------------------------
 
-Examples:
+# File system
+ls -la
+export ENV=prod
 
-# Shell commands
+# Run commands
+bash deploy.sh
 
 # API call
 curl https://api.example.com
@@ -43,33 +61,75 @@ curl https://api.example.com
 # AWS
 aws s3 ls
 
-# Read YAML
+# JSON parsing
+jq '.name' file.json
+
+# YAML parsing
 yq '.name' config.yaml
 
 # SSH
 ssh user@server
 
+# Copy files
+scp app.jar user@server:/opt/apps/
+
 # Docker
 docker ps
+
+# Kubernetes
+kubectl get pods
+
+# Logging
+logger "Deployment started"
+
+# CLI arguments
+./script.sh -e prod
+
+# Regex / log parsing
+grep "ERROR" app.log
+awk '{print $1}' file.txt
 
 # Bash testing
 bats test.sh
 -------------------------------------------------------
 Summary:
 
-Most Python automation tasks CAN be done in Bash.
+Real DevOps usage
 
-But Python is better for:
-- large projects
-- reusable code
-- APIs & JSON handling
-- cloud SDKs
-- testing frameworks
-- error handling
+Most DevOps engineers use BOTH:
 
-Bash is better for:
-- quick Linux automation
-- server administration
-- command execution
+Bash
+- Jenkins pipelines
+- Shell scripts
+- Linux admin
+- kubectl/docker commands
+- Quick fixes
+
+Python
+- AWS automation
+- Complex deployments
+- Monitoring tools
+- API automation
+- Kubernetes automation
+- Custom DevOps platforms
 ---------------------------------------------------------------------
+Industry preference
+
+| Scenario                 | Preferred |
+| ------------------------ | --------- |
+| Simple server automation | Bash      |
+| CI/CD scripts            | Bash      |
+| Cloud automation         | Python    |
+| Kubernetes automation    | Python    |
+| Large scalable tools     | Python    |
+| One-liner commands       | Bash      |
+
+---------------------------------------------------------------------------
+For Kubernetes + DevOps career:
+
+- Learn Bash first
+- Then Python automation
+- Then Kubernetes SDKs & boto3
+
+That combination is highly valuable in DevOps/SRE roles.
 
