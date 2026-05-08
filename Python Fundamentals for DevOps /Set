@@ -2,6 +2,51 @@
 Set = Unique items collection in Python!
 Best for finding duplicates, comparing server lists & tracking unique values! 🚀
 ----------------------------------------------------------------------------------------------------------------------------------------
+📊 List vs Tuple vs Dictionary vs Set
+
+Feature         List            Tuple           Dictionary         Set
+--------------------------------------------------------------------------------
+Syntax          [ ]             ( )             { : }              { }
+
+Duplicates      ✅ Yes          ✅ Yes          ❌ Keys unique     ❌ No
+
+Ordered         ✅ Yes          ✅ Yes          ✅ Yes             ❌ No
+
+Changeable      ✅ Yes          ❌ No           ✅ Yes             ✅ Yes
+
+Access by       Index           Index           Key                Loop only
+
+Use for         Collection      Fixed data      Key value          Unique items
+--------------------------------------------------------------------------------
+📊 Summary Table
+
+Task               Code
+----------------------------------------------------------------
+Create             s = {'web1', 'web2'}
+
+From list          s = set(mylist)
+
+Add item           s.add('web4')
+
+Remove item        s.remove('web1')
+
+Safe remove        s.discard('web1')
+
+Check exists       'web1' in s
+
+Union              s1 | s2
+
+Intersection       s1 & s2
+
+Difference         s1 - s2
+
+Symmetric diff     s1 ^ s2
+
+Is subset          s1.issubset(s2)
+
+Is superset        s1.issuperset(s2)
+
+-----------------------------------------------------------------------------------------------------------------------------------
 
 🤔 What is Set?
 Think of Set as a Bag of Unique Items 🎒
