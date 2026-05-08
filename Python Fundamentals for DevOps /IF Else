@@ -1,0 +1,409 @@
+------------------------------------------------------------------------------------------------------------------------
+If/Else = Decision making in Python!
+Every DevOps script needs decisions — is server up? is disk full? is deploy safe?
+If/Else answers all these questions! 🚀
+------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Operator       Meaning              Example
+----------------------------------------------------------------
+==             Equal to             env == 'production'
+
+!=             Not equal            env != 'staging'
+
+>              Greater than         cpu > 80
+
+<              Less than            memory < 20
+
+>=             Greater or equal     disk >= 90
+
+<=             Less or equal        replicas <= 5
+
+and            Both true            cpu > 80 and memory > 80
+
+or             One true             cpu > 80 or memory > 80
+
+not            Reverse              not debug
+
+in             Exists in            'web1' in servers
+
+not in         Not exists           'web1' not in servers
+
+is None        Is nothing           result is None
+
+is not None    Has value            result is not None
+-----------------------------------------------------------------------------------------------------------------------
+🤔 What is If/Else?
+Think of If/Else as a Traffic Signal 🚦
+
+IF   green light → GO
+ELIF yellow light → SLOW DOWN
+ELSE red light   → STOP
+
+# If/Else = Make decisions in your code
+
+if condition:
+    # do this if TRUE
+else:
+    # do this if FALSE
+
+1. Basic If
+
+# Simple if
+cpu_usage = 85
+
+if cpu_usage > 80:
+    print("CPU usage is high!")
+
+# Only runs if condition is TRUE
+# If FALSE - nothing happens
+
+2. If/Else
+
+cpu_usage = 85
+
+if cpu_usage > 80:
+    print("CPU usage HIGH!")    # Runs if TRUE
+else:
+    print("CPU usage normal!")  # Runs if FALSE
+
+3. If/Elif/Else
+
+cpu_usage = 85
+
+if cpu_usage > 90:
+    print("CRITICAL - CPU usage!")
+elif cpu_usage > 80:
+    print("WARNING  - CPU high!")
+elif cpu_usage > 70:
+    print("CAUTION  - CPU medium!")
+else:
+    print("OK       - CPU normal!")
+
+# Output: WARNING - CPU high!
+
+4. Comparison Operators
+
+x = 10
+y = 20
+
+print(x == y)    # False  - equal to
+print(x != y)    # True   - not equal to
+print(x > y)     # False  - greater than
+print(x < y)     # True   - less than
+print(x >= y)    # False  - greater or equal
+print(x <= y)    # True   - less or equal
+
+5. Logical Operators
+
+cpu    = 85
+memory = 90
+
+# AND - both must be TRUE
+if cpu > 80 and memory > 80:
+    print("Both CPU and Memory are high!")
+
+# OR - at least one must be TRUE
+if cpu > 80 or memory > 80:
+    print("Either CPU or Memory is high!")
+
+# NOT - reverse the condition
+debug = False
+if not debug:
+    print("Debug mode is OFF!")
+
+6. Check String
+
+env = 'production'
+
+# Check string value
+if env == 'production':
+    print("Deploying to production!")
+
+# Check string content
+log = 'ERROR: Database connection failed'
+
+if 'ERROR' in log:
+    print("Error found in log!")
+
+if log.startswith('ERROR'):
+    print("Log starts with ERROR!")
+
+# Check empty string
+name = ''
+if not name:
+    print("Name is empty!")
+
+7. Check List & Dictionary
+
+# Check if list is empty
+servers = ['web1', 'web2', 'web3']
+
+if servers:
+    print("Servers available!")
+else:
+    print("No servers found!")
+
+# Check if item in list
+if 'web1' in servers:
+    print("web1 is running!")
+
+# Check if key in dictionary
+config = {'host': 'localhost', 'port': 8080}
+
+if 'port' in config:
+    print(f"Port: {config['port']}")
+
+# Check if dictionary is empty
+if not config:
+    print("Config is empty!")
+
+8. Check None
+
+# None = nothing / no value
+
+result = None
+
+if result is None:
+    print("No result found!")
+
+if result is not None:
+    print(f"Result: {result}")
+
+# Real DevOps use
+db_password = os.environ.get('DB_PASSWORD')
+
+if db_password is None:
+    print("ERROR: DB_PASSWORD not set!")
+    sys.exit(1)
+
+9. Nested If
+
+env     = 'production'
+version = 'v2.0'
+tested  = True
+
+if env == 'production':
+    print("Production deployment!")
+
+    if not tested:
+        print("ERROR: Not tested!")
+        sys.exit(1)
+
+    if version == 'v2.0':
+        print("Deploying v2.0...")
+    else:
+        print(f"Deploying {version}...")
+
+else:
+    print(f"Deploying to {env}...")
+
+10. One Line If (Ternary)
+
+cpu = 85
+
+# Normal if/else
+if cpu > 80:
+    status = 'HIGH'
+else:
+    status = 'NORMAL'
+
+# One line version
+status = 'HIGH' if cpu > 80 else 'NORMAL'
+print(status)   # HIGH
+
+# Real DevOps use
+replicas = 5 if env == 'production' else 2
+debug    = True if env == 'development' else False
+port     = 80 if env == 'production' else 8080
+
+11. Real DevOps Use Cases
+✅ Check Environment Before Deploy
+
+import sys
+
+env = sys.argv[1]
+
+# Validate environment
+if env not in ['production', 'staging', 'development']:
+    print(f"ERROR: Invalid environment {env}!")
+    sys.exit(1)
+
+# Extra check for production
+if env == 'production':
+    confirm = input("Deploy to PRODUCTION? (yes/no): ")
+    if confirm != 'yes':
+        print("Deployment cancelled!")
+        sys.exit(0)
+
+print(f"Deploying to {env}...")
+
+✅ Check Server Health
+
+import subprocess
+
+def check_server_health(server):
+    # Ping server
+    result = subprocess.run(
+        ['ping', '-c', '1', server],
+        capture_output=True
+    )
+
+    if result.returncode == 0:
+        print(f"{server} is UP ✅")
+        return True
+    else:
+        print(f"{server} is DOWN ❌")
+        return False
+
+servers = ['192.168.1.1', '192.168.1.2', '192.168.1.3']
+
+for server in servers:
+    is_healthy = check_server_health(server)
+
+    if not is_healthy:
+        print(f"ALERT: {server} is down!")
+        # Send alert...
+
+✅ Check Disk Space
+
+import subprocess
+
+result = subprocess.run(
+    ['df', '-h', '/'],
+    capture_output=True,
+    text=True
+)
+
+lines = result.stdout.strip().split('\n')
+data  = lines[1].split()
+usage = int(data[4].replace('%', ''))
+
+if usage >= 90:
+    print(f"CRITICAL: Disk {usage}% full!")
+    # Send critical alert
+elif usage >= 80:
+    print(f"WARNING: Disk {usage}% full!")
+    # Send warning alert
+elif usage >= 70:
+    print(f"CAUTION: Disk {usage}% used")
+else:
+    print(f"OK: Disk {usage}% used ✅")
+
+✅ Docker Container Check
+
+import docker
+
+client = docker.from_env()
+
+def check_container(name):
+    try:
+        container = client.containers.get(name)
+
+        if container.status == 'running':
+            print(f"{name} is running ✅")
+
+        elif container.status == 'exited':
+            print(f"{name} has stopped!")
+            print("Restarting...")
+            container.restart()
+
+        elif container.status == 'paused':
+            print(f"{name} is paused!")
+            container.unpause()
+
+        else:
+            print(f"{name} status: {container.status}")
+
+    except docker.errors.NotFound:
+        print(f"ERROR: {name} not found!")
+        print("Starting new container...")
+        client.containers.run(name, detach=True)
+
+check_container('myapp')
+check_container('nginx')
+check_container('postgres')
+
+✅ AWS Instance Check
+
+import boto3
+
+ec2 = boto3.client('ec2', region_name='us-east-1')
+
+response = ec2.describe_instances()
+
+for reservation in response['Reservations']:
+    for instance in reservation['Instances']:
+        instance_id = instance['InstanceId']
+        state       = instance['State']['Name']
+        type_       = instance['InstanceType']
+
+        if state == 'running':
+            print(f"{instance_id} is running ✅")
+
+        elif state == 'stopped':
+            print(f"{instance_id} is stopped!")
+
+            # Auto start stopped instances
+            if type_ == 't2.micro':
+                ec2.start_instances(
+                    InstanceIds=[instance_id]
+                )
+                print(f"Started {instance_id}!")
+
+        elif state == 'terminated':
+            print(f"{instance_id} is terminated!")
+
+        else:
+            print(f"{instance_id} state: {state}")
+
+✅ Kubernetes Pod Status Check
+
+from kubernetes import client, config
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+pods = v1.list_namespaced_pod(namespace='default')
+
+for pod in pods.items:
+    name   = pod.metadata.name
+    status = pod.status.phase
+
+    if status == 'Running':
+        print(f"{name} is running ✅")
+
+    elif status == 'Pending':
+        print(f"{name} is pending...")
+        # Wait or investigate
+
+    elif status == 'Failed':
+        print(f"{name} has FAILED! ❌")
+        # Get logs
+        logs = v1.read_namespaced_pod_log(
+            name=name,
+            namespace='default'
+        )
+        print(f"Logs: {logs}")
+        # Restart pod
+        v1.delete_namespaced_pod(
+            name=name,
+            namespace='default'
+        )
+
+    elif status == 'Succeeded':
+        print(f"{name} completed successfully!")
+
+    else:
+        print(f"{name} unknown status: {status}")
+
+💡 Most Used in DevOps
+
+1. Check environment          →  if env == 'production'
+2. Check server status        →  if status == 'running'
+3. Check disk/cpu/memory      →  if usage > 90
+4. Validate arguments         →  if env not in [...]
+5. Check file exists          →  if os.path.exists()
+6. Check command success      →  if returncode == 0
+7. Check API response         →  if status_code == 200
+8. Check container status     →  if container.status
