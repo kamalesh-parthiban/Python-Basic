@@ -1,0 +1,386 @@
+-----------------------------------------------------------------------------------------------------------------------------------
+paramiko = SSH into servers & transfer files from Python! // paramiko = Full SSH & SFTP control from Python!
+Automate ANY task on remote servers without manually logging in! 🚀
+-----------------------------------------------------------------------------------------------------------------------------------
+🤔 First – What is paramiko?
+
+paramiko = SSH client for Python
+
+Just like you type:
+ssh user@192.168.1.1
+
+paramiko does the same thing
+but from inside Python script!
+
+---------------------------------------------------------------------------------------------------------------
+paramiko is used for:
+
+✅ SSH into remote servers
+✅ Run commands on remote servers
+✅ Upload files to servers (SFTP)
+✅ Download files from servers (SFTP)
+✅ Automate server management
+✅ Deploy applications remotely
+
+1. Install & Import
+
+pip install paramiko
+
+import paramiko
+
+2. Basic SSH Connection
+
+import paramiko
+
+# Create SSH client
+ssh = paramiko.SSHClient()
+
+# Auto add server to known hosts
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+# Connect to server
+ssh.connect(
+    hostname='192.168.1.1',
+    username='ubuntu',
+    password='mypassword'
+)
+
+print("Connected! ✅")
+
+# Close connection
+ssh.close()
+
+3. Connect with SSH Key (More Secure)
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+# Connect using private key
+ssh.connect(
+    hostname='192.168.1.1',
+    username='ubuntu',
+    key_filename='/home/user/.ssh/id_rsa'   # private key path
+)
+
+print("Connected with SSH key! ✅")
+ssh.close()
+
+4. Run Commands on Remote Server
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('192.168.1.1', username='ubuntu', password='password')
+
+# Run command
+stdin, stdout, stderr = ssh.exec_command('ls -la')
+
+# Get output
+output = stdout.read().decode('utf-8')
+error = stderr.read().decode('utf-8')
+
+print("Output:", output)
+print("Error:", error)
+
+ssh.close()
+
+5. Run Multiple Commands
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('192.168.1.1', username='ubuntu', password='password')
+
+# List of commands to run
+commands = [
+    'sudo apt update',
+    'sudo apt install -y nginx',
+    'sudo systemctl start nginx',
+    'sudo systemctl enable nginx'
+]
+
+# Run each command
+for cmd in commands:
+    print(f"Running: {cmd}")
+    stdin, stdout, stderr = ssh.exec_command(cmd)
+    output = stdout.read().decode('utf-8')
+    error = stderr.read().decode('utf-8')
+
+    if output:
+        print("Output:", output)
+    if error:
+        print("Error:", error)
+
+print("All commands done! ✅")
+ssh.close()
+
+6. Check Command Exit Code
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('192.168.1.1', username='ubuntu', password='password')
+
+stdin, stdout, stderr = ssh.exec_command('systemctl status nginx')
+
+# Wait for command to finish
+exit_code = stdout.channel.recv_exit_status()
+
+if exit_code == 0:
+    print("nginx is running! ✅")
+else:
+    print("nginx is NOT running! ❌")
+
+ssh.close()
+
+7. SFTP – Upload Files to Server
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('192.168.1.1', username='ubuntu', password='password')
+
+# Open SFTP connection
+sftp = ssh.open_sftp()
+
+# Upload file
+sftp.put('local_file.txt', '/home/ubuntu/remote_file.txt')
+print("File uploaded! ✅")
+
+# Upload entire script
+sftp.put('deploy.sh', '/opt/deploy.sh')
+
+sftp.close()
+ssh.close()
+
+8. SFTP – Download Files from Server
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('192.168.1.1', username='ubuntu', password='password')
+
+sftp = ssh.open_sftp()
+
+# Download file from server
+sftp.get('/var/log/app.log', 'local_app.log')
+print("File downloaded! ✅")
+
+# Download config file
+sftp.get('/etc/nginx/nginx.conf', 'nginx.conf')
+
+sftp.close()
+ssh.close()
+
+9. SFTP – File Operations on Remote Server
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('192.168.1.1', username='ubuntu', password='password')
+
+sftp = ssh.open_sftp()
+
+# List files in remote directory
+files = sftp.listdir('/home/ubuntu')
+print("Files:", files)
+
+# Create remote directory
+sftp.mkdir('/home/ubuntu/newdir')
+
+# Rename remote file
+sftp.rename('/home/ubuntu/old.txt', '/home/ubuntu/new.txt')
+
+# Delete remote file
+sftp.remove('/home/ubuntu/file.txt')
+
+# Check file size
+stat = sftp.stat('/home/ubuntu/file.txt')
+print(f"File size: {stat.st_size} bytes")
+
+sftp.close()
+ssh.close()
+
+10. Real DevOps Use Cases
+✅ Deploy Application to Server
+
+import paramiko
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('192.168.1.1', username='ubuntu',
+            key_filename='~/.ssh/id_rsa')
+
+sftp = ssh.open_sftp()
+
+# Step 1 - Upload new app build
+print("Uploading new build...")
+sftp.put('myapp.jar', '/opt/myapp/myapp.jar')
+
+# Step 2 - Stop old app
+print("Stopping old app...")
+ssh.exec_command('sudo systemctl stop myapp')
+
+# Step 3 - Start new app
+print("Starting new app...")
+ssh.exec_command('sudo systemctl start myapp')
+
+# Step 4 - Check status
+stdin, stdout, stderr = ssh.exec_command(
+    'sudo systemctl status myapp'
+)
+print(stdout.read().decode('utf-8'))
+
+sftp.close()
+ssh.close()
+print("Deployment done! ✅")
+
+✅ Collect Logs from Multiple Servers
+
+import paramiko
+import os
+
+servers = [
+    '192.168.1.1',
+    '192.168.1.2',
+    '192.168.1.3'
+]
+
+os.makedirs('collected_logs', exist_ok=True)
+
+for server in servers:
+    print(f"Collecting logs from {server}...")
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(server, username='ubuntu', password='password')
+
+    sftp = ssh.open_sftp()
+
+    # Download log file
+    sftp.get('/var/log/app.log', f'collected_logs/{server}_app.log')
+
+    sftp.close()
+    ssh.close()
+    print(f"Logs collected from {server}! ✅")
+
+print("All logs collected!")
+
+✅ Check Disk Space on Multiple Servers
+
+import paramiko
+
+servers = ['192.168.1.1', '192.168.1.2', '192.168.1.3']
+
+for server in servers:
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(server, username='ubuntu', password='password')
+
+    # Check disk space
+    stdin, stdout, stderr = ssh.exec_command('df -h /')
+    output = stdout.read().decode('utf-8')
+
+    print(f"\n Server: {server}")
+    print(output)
+
+    ssh.close()
+
+✅ Install Software on Multiple Servers
+
+import paramiko
+
+servers = ['192.168.1.1', '192.168.1.2', '192.168.1.3']
+
+for server in servers:
+    print(f"Installing nginx on {server}...")
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(server, username='ubuntu', password='password')
+
+    commands = [
+        'sudo apt update -y',
+        'sudo apt install -y nginx',
+        'sudo systemctl start nginx',
+        'sudo systemctl enable nginx'
+    ]
+
+    for cmd in commands:
+        stdin, stdout, stderr = ssh.exec_command(cmd)
+        stdout.channel.recv_exit_status()  # wait to finish
+
+    ssh.close()
+    print(f"nginx installed on {server}! ✅")
+
+✅ Backup Database Remotely
+
+import paramiko
+from datetime import datetime
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('192.168.1.1', username='ubuntu', password='password')
+
+# Create backup on remote server
+date = datetime.now().strftime('%Y%m%d')
+backup_file = f'backup_{date}.sql'
+
+ssh.exec_command(
+    f'mysqldump -u root -ppassword mydb > /tmp/{backup_file}'
+)
+
+# Download backup
+sftp = ssh.open_sftp()
+sftp.get(f'/tmp/{backup_file}', f'backups/{backup_file}')
+
+sftp.close()
+ssh.close()
+print(f"Database backup downloaded: {backup_file} ✅")
+
+11. Error Handling
+
+import paramiko
+
+try:
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(
+        '192.168.1.1',
+        username='ubuntu',
+        password='password',
+        timeout=10
+    )
+    print("Connected! ✅")
+
+except paramiko.AuthenticationException:
+    print("ERROR: Wrong username or password!")
+
+except paramiko.SSHException:
+    print("ERROR: SSH connection failed!")
+
+except TimeoutError:
+    print("ERROR: Connection timed out!")
+
+except Exception as e:
+    print(f"ERROR: {e}")
+
+finally:
+    ssh.close()
+
+💡 Most Used in DevOps
+
+1. SSH into servers          → Manage remote servers
+2. Run commands remotely     → Deploy, restart services
+3. Upload files (SFTP)       → Deploy app builds
+4. Download logs (SFTP)      → Collect logs centrally
+5. Multi server automation   → Run same task on all servers
+6. Database backups          → Remote backup & download
