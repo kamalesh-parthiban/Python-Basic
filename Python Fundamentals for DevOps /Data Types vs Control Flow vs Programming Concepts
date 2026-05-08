@@ -1,42 +1,24 @@
 Python Fundamentals for DevOps
 
-1. Variables            → store values
-2. String               → text data
-3. List                 → [ ] ordered changeable collection
-4. Tuple                → ( ) ordered fixed collection
-5. Dictionary           → { } key-value pairs
-6. Set                  → unique values only
-
-7. If/else              → conditions
-8. For loop             → repeat tasks
-9. While loop           → repeated execution
-
-10. Functions           → reusable code blocks
-11. Classes             → object-oriented programming
-
-12. File handling       → read/write files
-13. Exception handling  → handle errors
-14. Try/except          → prevent script failures
-
 Data Types
 -----------
-String
-List
-Tuple
-Dictionary
-Set
+String               → text data
+List                 → [ ] ordered changeable collection
+Tuple                → ( ) ordered fixed collection
+Dictionary           → { } key-value pairs
+Set                  → unique values only
 
 Control Flow
 -------------
-If/else
-For loop
-While loop
+If/else              → conditions
+For loop             → repeat tasks
+While loop           → repeated execution
 
 Programming Concepts
 ---------------------
-Variables
-Functions
-Classes
-File handling
-Exception handling
-Try/except
+Variables            → store values
+Functions            → reusable code blocks
+Classes              → object-oriented programming
+File handling        → read/write files
+Exception handling   → handle errors
+Try/except           → prevent script failures
