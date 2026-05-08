@@ -1,5 +1,7 @@
 ----------------------------------------------------------------------------------------------------------------------------------
-requests = Make HTTP calls to any API or Website!
+requests = Make HTTP calls to any API or Website! // requests = Talk to ANY API or website from Python!
+It is the most used Python library in DevOps for
+connecting tools, sending alerts & triggering pipelines! 🚀
 ---------------------------------------------------------------------------------------------------------------------------------
 requests is a Python library.
 
@@ -301,3 +303,12 @@ response = requests.get(
 )
 print(response.json())
 ---------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. Trigger Jenkins/GitHub Actions builds
+2. Send Slack/Teams alerts
+3. Call Kubernetes API
+4. Check website/API health
+5. Interact with cloud APIs
+6. Send deployment notifications
+7. Create GitHub issues automatically
