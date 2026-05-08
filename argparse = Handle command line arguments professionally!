@@ -1,0 +1,528 @@
+---------------------------------------------------------------------------------------------------------------------------------------------
+argparse = Handle command line arguments professionally! // argparse = Build professional CLI tools in Python!
+Way better than sys.argv for real DevOps automation scripts! 🚀
+---------------------------------------------------------------------------------------------------------------------------------------------
+📊 sys.argv vs argparse
+
+Feature             sys.argv              argparse
+----------------------------------------------------------------
+Validation          ❌ Manual              ✅ Automatic
+
+Help message        ❌ Manual              ✅ Automatic
+
+Default values      ❌ Manual              ✅ Built-in
+
+Type checking       ❌ Manual              ✅ Built-in
+
+Choices limit       ❌ Manual              ✅ Built-in
+
+Short & long args   ❌ Manual              ✅ Built-in
+
+Subcommands         ❌ Very hard           ✅ Easy
+
+Professional CLI    ❌ Hard                ✅ Easy
+---------------------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Feature           Code
+----------------------------------------------------------------
+Basic arg         add_argument('--env')
+
+Required          add_argument('--env', required=True)
+
+Default           add_argument('--env', default='staging')
+
+Type              add_argument('--port', type=int)
+
+Choices           add_argument('--env', choices=[...])
+
+Boolean flag      add_argument('--debug', action='store_true')
+
+Short & long      add_argument('-e', '--env')
+
+Multiple values   add_argument('--servers', nargs='+')
+
+Subcommands       add_subparsers(dest='command')
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+🤔 First – What is argparse?
+
+Remember sys.argv?
+
+sys.argv  →  Basic, no validation, no help
+argparse  →  Professional, validation, auto help, types
+
+sys.argv way:
+python deploy.py production 8080
+
+argparse way:
+python deploy.py --env production --port 8080 --debug
+
+argparse is used for:
+
+✅ Accept arguments from command line
+✅ Validate argument types automatically
+✅ Show help message automatically
+✅ Set default values
+✅ Make arguments required or optional
+✅ Build professional CLI tools
+---------------------------------------------------------------------------------------------------------------------------------------------
+1. Import
+
+# argparse is built-in - no install needed!
+import argparse
+---------------------------------------------------------------------------------------------------------------------------------------------
+2. Basic Setup
+
+import argparse
+
+# Create parser
+parser = argparse.ArgumentParser(
+    description='My Deployment Tool'
+)
+
+# Add argument
+parser.add_argument('--env', help='Environment to deploy to')
+
+# Parse arguments
+args = parser.parse_args()
+
+# Use argument
+print(f"Deploying to: {args.env}")
+
+Run:
+
+python deploy.py --env production
+# Output: Deploying to: production
+---------------------------------------------------------------------------------------------------------------------------------------------
+3. Auto Help Message
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='DevOps Deployment Tool'
+)
+parser.add_argument('--env',  help='Target environment')
+parser.add_argument('--port', help='Application port')
+
+args = parser.parse_args()
+
+Run:
+
+python deploy.py --help
+
+# Output:
+# usage: deploy.py [-h] [--env ENV] [--port PORT]
+#
+# DevOps Deployment Tool
+#
+# options:
+#   -h, --help   show this help message and exit
+#   --env ENV    Target environment
+#   --port PORT  Application port
+---------------------------------------------------------------------------------------------------------------------------------------------
+4. Required Arguments
+
+import argparse
+
+parser = argparse.ArgumentParser()
+
+# Required argument
+parser.add_argument(
+    '--env',
+    required=True,         # Must provide this!
+    help='Environment (production/staging)'
+)
+
+# Optional argument
+parser.add_argument(
+    '--port',
+    required=False,        # Optional
+    help='Port number'
+)
+
+args = parser.parse_args()
+print(args.env)
+
+Run:
+
+# Without required argument
+python deploy.py
+# Error: the following arguments are required: --env
+
+# With required argument
+python deploy.py --env production
+# Works!
+---------------------------------------------------------------------------------------------------------------------------------------------
+5. Default Values
+
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    '--env',
+    default='staging',      # Default value
+    help='Environment'
+)
+
+parser.add_argument(
+    '--port',
+    default=8080,           # Default port
+    help='Port number'
+)
+
+parser.add_argument(
+    '--replicas',
+    default=3,
+    help='Number of replicas'
+)
+
+args = parser.parse_args()
+print(f"Environment: {args.env}")      # staging (default)
+print(f"Port: {args.port}")            # 8080 (default)
+print(f"Replicas: {args.replicas}")    # 3 (default)
+---------------------------------------------------------------------------------------------------------------------------------------------
+6. Argument Types
+
+import argparse
+
+parser = argparse.ArgumentParser()
+
+# String (default)
+parser.add_argument('--env',      type=str,   help='Environment')
+
+# Integer
+parser.add_argument('--port',     type=int,   help='Port number')
+
+# Float
+parser.add_argument('--timeout',  type=float, help='Timeout seconds')
+
+# Boolean flag
+parser.add_argument('--debug',    action='store_true', help='Debug mode')
+parser.add_argument('--no-cache', action='store_true', help='No cache')
+
+args = parser.parse_args()
+
+print(args.env)       # string
+print(args.port)      # integer
+print(args.timeout)   # float
+print(args.debug)     # True or False
+
+Run:
+
+python deploy.py --env production --port 8080 --timeout 30.5 --debug
+---------------------------------------------------------------------------------------------------------------------------------------------
+7. Choices – Limit Valid Values
+
+import argparse
+
+parser = argparse.ArgumentParser()
+
+# Only allow specific values
+parser.add_argument(
+    '--env',
+    choices=['production', 'staging', 'development'],
+    required=True,
+    help='Target environment'
+)
+
+parser.add_argument(
+    '--log-level',
+    choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
+    default='INFO',
+    help='Log level'
+)
+
+args = parser.parse_args()
+print(f"Environment: {args.env}")
+
+Run:
+
+# Invalid choice
+python deploy.py --env testing
+# Error: invalid choice: 'testing'
+# choose from 'production', 'staging', 'development'
+
+# Valid choice
+python deploy.py --env production
+# Works!
+---------------------------------------------------------------------------------------------------------------------------------------------
+8. Short & Long Arguments
+
+import argparse
+
+parser = argparse.ArgumentParser()
+
+# Short (-e) and long (--env) versions
+parser.add_argument(
+    '-e', '--env',
+    required=True,
+    help='Environment'
+)
+
+parser.add_argument(
+    '-p', '--port',
+    type=int,
+    default=8080,
+    help='Port number'
+)
+
+parser.add_argument(
+    '-d', '--debug',
+    action='store_true',
+    help='Debug mode'
+)
+
+args = parser.parse_args()
+print(args.env)
+print(args.port)
+print(args.debug)
+
+Run:
+
+# Long version
+python deploy.py --env production --port 8080 --debug
+
+# Short version
+python deploy.py -e production -p 8080 -d
+---------------------------------------------------------------------------------------------------------------------------------------------
+9. Positional Arguments
+
+import argparse
+
+parser = argparse.ArgumentParser()
+
+# Positional - no -- needed
+parser.add_argument('environment', help='Target environment')
+parser.add_argument('version',     help='App version to deploy')
+
+# Optional
+parser.add_argument('--debug', action='store_true')
+
+args = parser.parse_args()
+print(f"Environment: {args.environment}")
+print(f"Version: {args.version}")
+
+Run:
+
+python deploy.py production v2.0
+# Environment: production
+# Version: v2.0
+---------------------------------------------------------------------------------------------------------------------------------------------
+10. Multiple Values
+
+import argparse
+
+parser = argparse.ArgumentParser()
+
+# Accept multiple values
+parser.add_argument(
+    '--servers',
+    nargs='+',          # One or more values
+    help='Server IPs'
+)
+
+parser.add_argument(
+    '--ports',
+    nargs='*',          # Zero or more values
+    type=int,
+    help='Port numbers'
+)
+
+parser.add_argument(
+    '--replicas',
+    nargs=3,            # Exactly 3 values
+    type=int,
+    help='Replica counts'
+)
+
+args = parser.parse_args()
+print(args.servers)    # ['192.168.1.1', '192.168.1.2']
+print(args.ports)      # [8080, 9090]
+print(args.replicas)   # [3, 3, 3]
+
+Run:
+
+python deploy.py \
+  --servers 192.168.1.1 192.168.1.2 \
+  --ports 8080 9090 \
+  --replicas 3 3 3
+---------------------------------------------------------------------------------------------------------------------------------------------
+11. Subcommands
+
+import argparse
+
+parser = argparse.ArgumentParser(description='DevOps CLI Tool')
+
+# Create subcommands
+subparsers = parser.add_subparsers(dest='command')
+
+# deploy subcommand
+deploy_parser = subparsers.add_parser('deploy', help='Deploy app')
+deploy_parser.add_argument('--env', required=True)
+deploy_parser.add_argument('--version', required=True)
+
+# rollback subcommand
+rollback_parser = subparsers.add_parser('rollback', help='Rollback app')
+rollback_parser.add_argument('--env', required=True)
+rollback_parser.add_argument('--version', required=True)
+
+# status subcommand
+status_parser = subparsers.add_parser('status', help='Check status')
+status_parser.add_argument('--env', required=True)
+
+args = parser.parse_args()
+
+# Handle subcommands
+if args.command == 'deploy':
+    print(f"Deploying {args.version} to {args.env}")
+
+elif args.command == 'rollback':
+    print(f"Rolling back to {args.version} in {args.env}")
+
+elif args.command == 'status':
+    print(f"Checking status of {args.env}")
+
+Run:
+
+# Deploy
+python tool.py deploy --env production --version v2.0
+
+# Rollback
+python tool.py rollback --env production --version v1.0
+
+# Status
+python tool.py status --env production
+
+# Help
+python tool.py --help
+python tool.py deploy --help
+
+12. Real DevOps Use Cases
+✅ Deployment CLI Tool
+
+import argparse
+import logging
+import sys
+
+def deploy(args):
+    logging.info(f"Deploying to {args.env}...")
+    logging.info(f"Version: {args.version}")
+    logging.info(f"Replicas: {args.replicas}")
+
+    if args.debug:
+        logging.debug("Debug mode enabled!")
+
+    # deployment logic here
+    print(f"Deployed {args.version} to {args.env}! ✅")
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Production Deployment Tool'
+    )
+
+    parser.add_argument(
+        '-e', '--env',
+        required=True,
+        choices=['production', 'staging', 'development'],
+        help='Target environment'
+    )
+
+    parser.add_argument(
+        '-v', '--version',
+        required=True,
+        help='Version to deploy (e.g. v2.0)'
+    )
+
+    parser.add_argument(
+        '-r', '--replicas',
+        type=int,
+        default=3,
+        help='Number of replicas (default: 3)'
+    )
+
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='Enable debug mode'
+    )
+
+    parser.add_argument(
+        '--dry-run',
+        action='store_true',
+        help='Simulate without deploying'
+    )
+
+    args = parser.parse_args()
+
+    # Setup logging
+    level = logging.DEBUG if args.debug else logging.INFO
+    logging.basicConfig(level=level)
+
+    # Dry run check
+    if args.dry_run:
+        print(f"DRY RUN: Would deploy {args.version} to {args.env}")
+        sys.exit(0)
+
+    deploy(args)
+
+if __name__ == '__main__':
+    main()
+
+Run:
+
+python deploy.py -e production -v v2.0 -r 5 --debug
+python deploy.py -e staging -v v2.0 --dry-run
+python deploy.py --help
+
+✅ Backup CLI Tool
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='Database Backup Tool'
+)
+
+parser.add_argument('--host',     required=True, help='DB host')
+parser.add_argument('--port',     type=int, default=5432)
+parser.add_argument('--database', required=True, help='DB name')
+parser.add_argument('--output',   default='/tmp/backup', help='Output path')
+parser.add_argument(
+    '--compress',
+    action='store_true',
+    help='Compress backup'
+)
+parser.add_argument(
+    '--format',
+    choices=['sql', 'csv', 'json'],
+    default='sql',
+    help='Backup format'
+)
+
+args = parser.parse_args()
+
+print(f"Backing up {args.database} from {args.host}:{args.port}")
+print(f"Output: {args.output}")
+print(f"Format: {args.format}")
+print(f"Compress: {args.compress}")
+
+Run:
+
+python backup.py \
+  --host localhost \
+  --database mydb \
+  --output /backups \
+  --format sql \
+  --compress
+---------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOp
+
+1. --env         → Target environment
+2. --version     → App version
+3. --debug       → Enable debug mode
+4. --dry-run     → Simulate without doing
+5. --replicas    → Scale count
+6. subcommands   → deploy, rollback, status
+7. choices       → Limit valid environments
+---------------------------------------------------------------------------------------------------------------------------------------------
