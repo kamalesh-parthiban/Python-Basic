@@ -1,0 +1,312 @@
+------------------------------------------------------------------------------------------------------------------------------------
+pyyaml = Read & Write YAML files from Python! // pyyaml = Read & Write YAML config files from Python!
+Since YAML is used EVERYWHERE in DevOps — Kubernetes, Docker, CI/CD — this library is essential! 🚀
+------------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Task                     | Code
+-------------------------|-----------------------------------
+Read YAML file           | yaml.safe_load(file)
+
+Write YAML file          | yaml.dump(data, file)
+
+YAML string to Python    | yaml.safe_load(string)
+
+Python to YAML string    | yaml.dump(data)
+
+Read multiple docs       | yaml.safe_load_all(file)
+
+------------------------------------------------------------------------------------------------------------------------------------
+🤔 First – What is YAML?
+
+# YAML is a config file format used everywhere in DevOps
+
+name: myapp
+version: 1.0
+environment: production
+port: 8080
+
+database:
+  host: localhost
+  port: 5432
+  name: mydb
+
+servers:
+  - web1
+  - web2
+  - web3
+
+YAML is used in:
+
+✅ Kubernetes   → deployment.yaml
+✅ Docker       → docker-compose.yaml
+✅ GitHub Actions → .github/workflows/ci.yaml
+✅ Ansible      → playbook.yaml
+✅ Helm Charts  → values.yaml
+✅ ArgoCD       → application.yaml
+------------------------------------------------------------------------------------------------------------------------------------
+1. Install & Import
+
+pip install pyyaml
+
+import yaml
+
+------------------------------------------------------------------------------------------------------------------------------------
+2. Read YAML File
+
+import yaml
+
+# Read a yaml file
+with open('config.yaml', 'r') as file:
+    data = yaml.safe_load(file)
+
+print(data)
+# Output: {'name': 'myapp', 'version': 1.0, 'port': 8080}
+
+# Access values
+print(data['name'])          # myapp
+print(data['port'])          # 8080
+print(data['database']['host'])  # localhost
+------------------------------------------------------------------------------------------------------------------------------------
+3. Write YAML File
+
+import yaml
+
+# Python dictionary
+data = {
+    'name': 'myapp',
+    'version': '1.0',
+    'environment': 'production',
+    'port': 8080,
+    'database': {
+        'host': 'localhost',
+        'port': 5432,
+        'name': 'mydb'
+    }
+}
+
+# Write to yaml file
+with open('config.yaml', 'w') as file:
+    yaml.dump(data, file, default_flow_style=False)
+
+print("YAML file created! ✅")
+
+Output config.yaml:
+
+database:
+  host: localhost
+  name: mydb
+  port: 5432
+environment: production
+name: myapp
+port: 8080
+version: '1.0'
+------------------------------------------------------------------------------------------------------------------------------------
+4. Convert YAML to Python (Parse)
+
+import yaml
+
+# YAML string to Python dictionary
+yaml_string = """
+name: myapp
+replicas: 3
+image: nginx:latest
+ports:
+  - 80
+  - 443
+"""
+
+data = yaml.safe_load(yaml_string)
+
+print(data['name'])      # myapp
+print(data['replicas'])  # 3
+print(data['ports'])     # [80, 443]
+------------------------------------------------------------------------------------------------------------------------------------
+5. Convert Python to YAML (Dump)
+
+import yaml
+
+data = {
+    'name': 'myapp',
+    'replicas': 3,
+    'image': 'nginx:latest',
+    'ports': [80, 443]
+}
+
+# Convert to YAML string
+yaml_string = yaml.dump(data, default_flow_style=False)
+print(yaml_string)
+
+# Output:
+# image: nginx:latest
+# name: myapp
+# ports:
+# - 80
+# - 443
+# replicas: 3
+------------------------------------------------------------------------------------------------------------------------------------
+6. Read Multiple YAML Documents
+
+import yaml
+
+# File with multiple documents separated by ---
+yaml_content = """
+---
+name: service1
+port: 8080
+---
+name: service2
+port: 9090
+---
+name: service3
+port: 7070
+"""
+
+# Load all documents
+docs = list(yaml.safe_load_all(yaml_content))
+
+for doc in docs:
+    print(doc['name'], doc['port'])
+
+# Output:
+# service1 8080
+# service2 9090
+# service3 7070
+------------------------------------------------------------------------------------------------------------------------------------
+7. Real DevOps Use Cases
+✅ Read Kubernetes Deployment File
+
+import yaml
+
+# Read k8s deployment yaml
+with open('deployment.yaml', 'r') as f:
+    k8s = yaml.safe_load(f)
+
+# Get current image
+image = k8s['spec']['template']['spec']['containers'][0]['image']
+print(f"Current image: {image}")
+
+# Update image version
+k8s['spec']['template']['spec']['containers'][0]['image'] = 'myapp:v2.0'
+
+# Save updated yaml
+with open('deployment.yaml', 'w') as f:
+    yaml.dump(k8s, f, default_flow_style=False)
+
+print("Image updated! ✅")
+
+✅ Read Docker Compose File
+
+import yaml
+
+with open('docker-compose.yaml', 'r') as f:
+    compose = yaml.safe_load(f)
+
+# List all services
+for service in compose['services']:
+    print(f"Service: {service}")
+    print(f"Image: {compose['services'][service]['image']}")
+
+# Output:
+# Service: web
+# Image: nginx:latest
+# Service: db
+# Image: postgres:13
+
+✅ Generate Kubernetes YAML Automatically
+
+import yaml
+
+# Create k8s deployment from Python
+deployment = {
+    'apiVersion': 'apps/v1',
+    'kind': 'Deployment',
+    'metadata': {
+        'name': 'myapp',
+        'namespace': 'default'
+    },
+    'spec': {
+        'replicas': 3,
+        'selector': {
+            'matchLabels': {'app': 'myapp'}
+        },
+        'template': {
+            'spec': {
+                'containers': [{
+                    'name': 'myapp',
+                    'image': 'myapp:latest',
+                    'ports': [{'containerPort': 8080}]
+                }]
+            }
+        }
+    }
+}
+
+# Save as yaml file
+with open('deployment.yaml', 'w') as f:
+    yaml.dump(deployment, f, default_flow_style=False)
+
+print("deployment.yaml created! ✅")
+
+✅ Read CI/CD Pipeline Config
+
+import yaml
+
+# Read GitHub Actions workflow
+with open('.github/workflows/ci.yaml', 'r') as f:
+    pipeline = yaml.safe_load(f)
+
+# Get all jobs
+for job in pipeline['jobs']:
+    print(f"Job: {job}")
+
+# Get triggers
+print(pipeline['on'])  # push, pull_request etc
+
+✅ Update Config Based on Environment
+
+import yaml
+import sys
+
+env = sys.argv[1]  # production or staging
+
+# Read base config
+with open('config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+
+# Update based on environment
+if env == 'production':
+    config['replicas'] = 5
+    config['database']['host'] = 'prod-db.example.com'
+    config['debug'] = False
+elif env == 'staging':
+    config['replicas'] = 2
+    config['database']['host'] = 'staging-db.example.com'
+    config['debug'] = True
+
+# Save updated config
+with open(f'config.{env}.yaml', 'w') as f:
+    yaml.dump(config, f, default_flow_style=False)
+
+print(f"Config for {env} created! ✅")
+------------------------------------------------------------------------------------------------------------------------------------
+8. safe_load vs load
+
+# ✅ Always use safe_load - SECURE
+data = yaml.safe_load(file)
+
+# ❌ Never use load - UNSAFE (can execute code)
+data = yaml.load(file)   # Security risk!
+------------------------------------------------------------------------------------------------------------------------------------
+
+💡 Most Used in DevOps
+
+1. Read k8s deployment yaml        → Update image versions
+2. Read docker-compose yaml        → Get service details
+3. Generate yaml files             → Auto create k8s configs
+4. Read CI/CD pipeline config      → GitHub Actions, GitLab CI
+5. Update config per environment   → staging vs production
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+
