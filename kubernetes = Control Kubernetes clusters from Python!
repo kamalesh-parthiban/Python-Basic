@@ -1,0 +1,506 @@
+---------------------------------------------------------------------------------------------------------------------------------------------
+kubernetes = Control Kubernetes clusters from Python! // kubernetes library = Full cluster management from Python!
+Deploy, scale, monitor & manage entire Kubernetes infrastructure! 🚀
+---------------------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Resource        Tasks
+----------------------------------------------------------
+Pods            list, get, delete, logs
+
+Deployments     list, create, scale, update, delete
+
+Services        list, create, delete
+
+Namespaces      list, create, delete
+
+ConfigMaps      list, create, delete
+
+Secrets         list, create, delete
+
+Nodes           list, cordon, uncordon
+
+Jobs            list, create, delete
+
+Watch           monitor real time changes
+---------------------------------------------------------------------------------------------------------------------------------------------
+🤔 First – What is Kubernetes?
+
+Kubernetes (k8s) = Container Orchestration Platform
+
+It manages:
+✅ Running containers at scale
+✅ Auto scaling up & down
+✅ Load balancing traffic
+✅ Self healing (restart failed containers)
+✅ Rolling deployments
+✅ Service discovery
+---------------------------------------------------------------------------------------------------------------------------------------------
+1. Install & Import
+
+pip install kubernetes
+
+from kubernetes import client, config
+---------------------------------------------------------------------------------------------------------------------------------------------
+2. Connect to Kubernetes
+
+from kubernetes import client, config
+
+# Connect using local kubeconfig file (~/.kube/config)
+config.load_kube_config()
+
+# Connect from inside a pod (in cluster)
+config.load_incluster_config()
+
+# Connect to specific context
+config.load_kube_config(context='my-cluster')
+
+print("Connected to Kubernetes! ✅")
+---------------------------------------------------------------------------------------------------------------------------------------------
+3. Pods – Running Containers
+
+from kubernetes import client, config
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+# List all pods in all namespaces
+pods = v1.list_pod_for_all_namespaces()
+for pod in pods.items:
+    print(f"Pod: {pod.metadata.name}")
+    print(f"Namespace: {pod.metadata.namespace}")
+    print(f"Status: {pod.status.phase}")
+
+# List pods in specific namespace
+pods = v1.list_namespaced_pod(namespace='default')
+for pod in pods.items:
+    print(pod.metadata.name)
+
+# Get specific pod
+pod = v1.read_namespaced_pod(
+    name='mypod',
+    namespace='default'
+)
+print(pod.status.phase)
+
+# Delete pod
+v1.delete_namespaced_pod(
+    name='mypod',
+    namespace='default'
+)
+
+# Get pod logs
+logs = v1.read_namespaced_pod_log(
+    name='mypod',
+    namespace='default'
+)
+print(logs)
+---------------------------------------------------------------------------------------------------------------------------------------------
+4. Deployments – Managing App Replicas
+
+from kubernetes import client, config
+
+config.load_kube_config()
+apps_v1 = client.AppsV1Api()
+
+# List all deployments
+deployments = apps_v1.list_namespaced_deployment(namespace='default')
+for d in deployments.items:
+    print(f"Deployment: {d.metadata.name}")
+    print(f"Replicas: {d.spec.replicas}")
+    print(f"Available: {d.status.available_replicas}")
+
+# Get specific deployment
+deployment = apps_v1.read_namespaced_deployment(
+    name='myapp',
+    namespace='default'
+)
+
+# Scale deployment up or down
+deployment.spec.replicas = 5
+apps_v1.patch_namespaced_deployment(
+    name='myapp',
+    namespace='default',
+    body=deployment
+)
+print("Scaled to 5 replicas! ✅")
+
+# Delete deployment
+apps_v1.delete_namespaced_deployment(
+    name='myapp',
+    namespace='default'
+)
+---------------------------------------------------------------------------------------------------------------------------------------------
+5. Create Deployment from Python
+
+from kubernetes import client, config
+
+config.load_kube_config()
+apps_v1 = client.AppsV1Api()
+
+# Define deployment
+deployment = client.V1Deployment(
+    metadata=client.V1ObjectMeta(name='myapp'),
+    spec=client.V1DeploymentSpec(
+        replicas=3,
+        selector=client.V1LabelSelector(
+            match_labels={'app': 'myapp'}
+        ),
+        template=client.V1PodTemplateSpec(
+            metadata=client.V1ObjectMeta(
+                labels={'app': 'myapp'}
+            ),
+            spec=client.V1PodSpec(
+                containers=[
+                    client.V1Container(
+                        name='myapp',
+                        image='myapp:latest',
+                        ports=[client.V1ContainerPort(
+                            container_port=8080
+                        )]
+                    )
+                ]
+            )
+        )
+    )
+)
+
+# Create deployment
+apps_v1.create_namespaced_deployment(
+    namespace='default',
+    body=deployment
+)
+print("Deployment created! ✅")
+---------------------------------------------------------------------------------------------------------------------------------------------
+6. Services – Expose Apps
+
+from kubernetes import client, config
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+# List all services
+services = v1.list_namespaced_service(namespace='default')
+for svc in services.items:
+    print(f"Service: {svc.metadata.name}")
+    print(f"Type: {svc.spec.type}")
+    print(f"Port: {svc.spec.ports[0].port}")
+
+# Create service
+service = client.V1Service(
+    metadata=client.V1ObjectMeta(name='myapp-service'),
+    spec=client.V1ServiceSpec(
+        selector={'app': 'myapp'},
+        ports=[client.V1ServicePort(port=80, target_port=8080)],
+        type='LoadBalancer'
+    )
+)
+
+v1.create_namespaced_service(
+    namespace='default',
+    body=service
+)
+print("Service created! ✅")
+
+# Delete service
+v1.delete_namespaced_service(
+    name='myapp-service',
+    namespace='default'
+)
+---------------------------------------------------------------------------------------------------------------------------------------------
+7. Namespaces
+
+from kubernetes import client, config
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+# List all namespaces
+namespaces = v1.list_namespace()
+for ns in namespaces.items:
+    print(ns.metadata.name)
+
+# Create namespace
+namespace = client.V1Namespace(
+    metadata=client.V1ObjectMeta(name='production')
+)
+v1.create_namespace(body=namespace)
+print("Namespace created! ✅")
+
+# Delete namespace
+v1.delete_namespace(name='production')
+---------------------------------------------------------------------------------------------------------------------------------------------
+8. ConfigMaps – Store Config Data
+
+from kubernetes import client, config
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+# Create configmap
+configmap = client.V1ConfigMap(
+    metadata=client.V1ObjectMeta(name='myapp-config'),
+    data={
+        'DB_HOST': 'localhost',
+        'DB_PORT': '5432',
+        'APP_ENV': 'production'
+    }
+)
+
+v1.create_namespaced_config_map(
+    namespace='default',
+    body=configmap
+)
+print("ConfigMap created! ✅")
+
+# List configmaps
+configmaps = v1.list_namespaced_config_map(namespace='default')
+for cm in configmaps.items:
+    print(f"ConfigMap: {cm.metadata.name}")
+    print(f"Data: {cm.data}")
+
+# Delete configmap
+v1.delete_namespaced_config_map(
+    name='myapp-config',
+    namespace='default'
+)
+---------------------------------------------------------------------------------------------------------------------------------------------
+9. Secrets – Store Sensitive Data
+
+import base64
+from kubernetes import client, config
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+# Create secret
+secret = client.V1Secret(
+    metadata=client.V1ObjectMeta(name='myapp-secret'),
+    data={
+        'DB_PASSWORD': base64.b64encode(
+            b'mysecretpassword'
+        ).decode('utf-8'),
+        'API_KEY': base64.b64encode(
+            b'myapikey'
+        ).decode('utf-8')
+    }
+)
+
+v1.create_namespaced_secret(
+    namespace='default',
+    body=secret
+)
+print("Secret created! ✅")
+
+# List secrets
+secrets = v1.list_namespaced_secret(namespace='default')
+for s in secrets.items:
+    print(f"Secret: {s.metadata.name}")
+
+# Delete secret
+v1.delete_namespaced_secret(
+    name='myapp-secret',
+    namespace='default'
+)
+---------------------------------------------------------------------------------------------------------------------------------------------
+10. Nodes – Cluster Machines
+
+from kubernetes import client, config
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+# List all nodes
+nodes = v1.list_node()
+for node in nodes.items:
+    print(f"Node: {node.metadata.name}")
+    print(f"Status: {node.status.conditions[-1].type}")
+    print(f"CPU: {node.status.capacity['cpu']}")
+    print(f"Memory: {node.status.capacity['memory']}")
+
+# Get specific node
+node = v1.read_node(name='mynode')
+print(node.status.conditions)
+
+# Cordon node (stop scheduling pods)
+node.spec.unschedulable = True
+v1.patch_node(name='mynode', body=node)
+print("Node cordoned! ✅")
+
+# Uncordon node
+node.spec.unschedulable = False
+v1.patch_node(name='mynode', body=node)
+print("Node uncordoned! ✅")
+---------------------------------------------------------------------------------------------------------------------------------------------
+11. Apply YAML Files
+
+from kubernetes import client, config, utils
+import yaml
+
+config.load_kube_config()
+k8s_client = client.ApiClient()
+
+# Apply a yaml file (like kubectl apply -f)
+with open('deployment.yaml', 'r') as f:
+    yaml_content = yaml.safe_load(f)
+    utils.create_from_dict(k8s_client, yaml_content)
+
+print("YAML applied! ✅")
+---------------------------------------------------------------------------------------------------------------------------------------------
+12. Watch – Monitor Changes in Real Time
+
+from kubernetes import client, config, watch
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+# Watch pod changes in real time
+w = watch.Watch()
+for event in w.stream(
+    v1.list_namespaced_pod,
+    namespace='default'
+):
+    print(f"Event: {event['type']}")
+    print(f"Pod: {event['object'].metadata.name}")
+    print(f"Status: {event['object'].status.phase}")
+---------------------------------------------------------------------------------------------------------------------------------------------
+13. Real DevOps Use Cases
+✅ Rolling Deployment – Update Image
+
+from kubernetes import client, config
+
+config.load_kube_config()
+apps_v1 = client.AppsV1Api()
+
+# Get current deployment
+deployment = apps_v1.read_namespaced_deployment(
+    name='myapp',
+    namespace='default'
+)
+
+# Update image to new version
+deployment.spec.template.spec.containers[0].image = 'myapp:v2.0'
+
+# Apply update
+apps_v1.patch_namespaced_deployment(
+    name='myapp',
+    namespace='default',
+    body=deployment
+)
+print("Image updated to v2.0! ✅")
+
+✅ Auto Scale Based on Time
+
+from kubernetes import client, config
+import datetime
+
+config.load_kube_config()
+apps_v1 = client.AppsV1Api()
+
+# Get current hour
+hour = datetime.datetime.now().hour
+
+# Scale up during business hours
+if 9 <= hour <= 18:
+    replicas = 10
+else:
+    replicas = 2
+
+# Apply scaling
+deployment = apps_v1.read_namespaced_deployment(
+    name='myapp',
+    namespace='default'
+)
+deployment.spec.replicas = replicas
+
+apps_v1.patch_namespaced_deployment(
+    name='myapp',
+    namespace='default',
+    body=deployment
+)
+print(f"Scaled to {replicas} replicas! ✅")
+
+✅ Check All Failed Pods
+
+from kubernetes import client, config
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+# Find all failed pods
+pods = v1.list_pod_for_all_namespaces()
+
+failed_pods = []
+for pod in pods.items:
+    if pod.status.phase == 'Failed':
+        failed_pods.append({
+            'name': pod.metadata.name,
+            'namespace': pod.metadata.namespace,
+            'reason': pod.status.reason
+        })
+
+if failed_pods:
+    print("Failed Pods Found!")
+    for pod in failed_pods:
+        print(f"Pod: {pod['name']}")
+        print(f"Namespace: {pod['namespace']}")
+        print(f"Reason: {pod['reason']}")
+else:
+    print("No failed pods! ✅")
+
+✅ Cleanup Old Completed Jobs
+
+from kubernetes import client, config
+
+config.load_kube_config()
+batch_v1 = client.BatchV1Api()
+
+# List all jobs
+jobs = batch_v1.list_namespaced_job(namespace='default')
+
+for job in jobs.items:
+    # Delete completed jobs
+    if job.status.completion_time:
+        batch_v1.delete_namespaced_job(
+            name=job.metadata.name,
+            namespace='default'
+        )
+        print(f"Deleted completed job: {job.metadata.name}")
+
+print("Cleanup done! ✅")
+---------------------------------------------------------------------------------------------------------------------------------------------
+14. Error Handling
+
+from kubernetes import client, config
+from kubernetes.client.rest import ApiException
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+try:
+    pod = v1.read_namespaced_pod(
+        name='mypod',
+        namespace='default'
+    )
+    print(f"Pod status: {pod.status.phase}")
+
+except ApiException as e:
+    if e.status == 404:
+        print("ERROR: Pod not found!")
+    elif e.status == 403:
+        print("ERROR: Permission denied!")
+    else:
+        print(f"ERROR: {e}")
+
+except Exception as e:
+    print(f"ERROR: {e}")
+---------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. list_namespaced_pod()          → Check pod status
+2. patch_namespaced_deployment()  → Update image, scale
+3. read_namespaced_pod_log()      → Get pod logs
+4. create_namespaced_secret()     → Manage secrets
+5. create_namespaced_config_map() → Manage configs
+6. watch.Watch()                  → Monitor cluster changes
+7. utils.create_from_dict()       → Apply YAML files
