@@ -1,4 +1,4 @@
-✅ Must-Learn First (Beginner Priority)
+Must Learn (High Priority)
 
 1. os, sys, subprocess   → System automation
 2. requests              → API interactions
@@ -14,7 +14,7 @@ Good to Know (Medium Priority)
 9. logging         → proper log management
 10. argparse        → command line tools
 11. re              → regex for log parsing
-
+-----------------------------------------------------------------------------------------------------
 Module
 → a single Python file
 
