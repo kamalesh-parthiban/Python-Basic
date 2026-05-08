@@ -1,0 +1,354 @@
+-----------------------------------------------------------------------------------------------------------------------------------
+json = Read & Write JSON data from Python!
+-----------------------------------------------------------------------------------------------------------------------------------
+📊 JSON vs YAML — When to Use What
+
+Feature           | JSON                | YAML
+------------------|---------------------|-------------------
+APIs              | ✅ Best             | ❌ Rarely
+AWS files         | ✅ Best             | ❌ Rarely
+Kubernetes        | ❌ Rarely           | ✅ Best
+Docker            | ❌ Rarely           | ✅ Best
+CI/CD             | ❌ Rarely           | ✅ Best
+Logs              | ✅ Best             | ❌ Rarely
+Terraform state   | ✅ Best             | ❌ Rarely
+Comments          | ❌ Not supported    | ✅ Supported
+Readability       | ❌ Less readable    | ✅ More readable
+-----------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Task                         Code
+---------------------------------------------------------------
+Read JSON file               json.load(file)
+
+Write JSON file              json.dump(data, file)
+
+JSON string → Python         json.loads(string)
+
+Python → JSON string         json.dumps(data)
+
+Pretty print                 json.dumps(data, indent=4)
+
+Sort keys                    json.dumps(data, sort_keys=True)
+
+Error handling               json.JSONDecodeError
+-----------------------------------------------------------------------------------------------------------------------------------
+🤔 First – What is JSON?
+
+{
+    "name": "myapp",
+    "version": "1.0",
+    "port": 8080,
+    "active": true,
+    "servers": ["web1", "web2", "web3"],
+    "database": {
+        "host": "localhost",
+        "port": 5432
+    }
+}
+
+JSON is used in:
+
+✅ REST APIs          → Request & Response data
+✅ Config files       → app settings
+✅ AWS               → Policy files, responses
+✅ Terraform         → tfstate files
+✅ Package files     → package.json, composer.json
+✅ Log files         → structured logging
+
+1. Import
+
+# json is built-in - no install needed!
+import json
+
+2. Read JSON File
+
+import json
+
+# Read json file
+with open('config.json', 'r') as file:
+    data = json.load(file)
+
+print(data)
+# Output: {'name': 'myapp', 'port': 8080}
+
+# Access values
+print(data['name'])              # myapp
+print(data['port'])              # 8080
+print(data['database']['host'])  # localhost
+print(data['servers'][0])        # web1
+
+3. Write JSON File
+
+import json
+
+data = {
+    'name': 'myapp',
+    'version': '1.0',
+    'port': 8080,
+    'active': True,
+    'servers': ['web1', 'web2', 'web3'],
+    'database': {
+        'host': 'localhost',
+        'port': 5432
+    }
+}
+
+# Write to json file
+with open('config.json', 'w') as file:
+    json.dump(data, file, indent=4)
+
+print("JSON file created! ✅")
+
+Output config.json:
+
+{
+    "name": "myapp",
+    "version": "1.0",
+    "port": 8080,
+    "active": true,
+    "servers": [
+        "web1",
+        "web2",
+        "web3"
+    ],
+    "database": {
+        "host": "localhost",
+        "port": 5432
+    }
+}
+
+4. JSON String to Python (Parse)
+
+import json
+
+# JSON string to Python dictionary
+json_string = '{"name": "myapp", "port": 8080, "active": true}'
+
+data = json.loads(json_string)   # loads = load string
+
+print(data['name'])    # myapp
+print(data['port'])    # 8080
+print(data['active'])  # True
+print(type(data))      # <class 'dict'>
+
+5. Python to JSON String (Stringify)
+
+import json
+
+data = {
+    'name': 'myapp',
+    'port': 8080,
+    'active': True,
+    'servers': ['web1', 'web2']
+}
+
+# Python to JSON string
+json_string = json.dumps(data)
+print(json_string)
+# {"name": "myapp", "port": 8080, "active": true}
+
+# Pretty print with indentation
+json_string = json.dumps(data, indent=4)
+print(json_string)
+
+6. Pretty Print JSON
+
+import json
+
+data = {'name': 'myapp', 'servers': ['web1', 'web2'], 'port': 8080}
+
+# Pretty print
+print(json.dumps(data, indent=4))
+
+# Output:
+# {
+#     "name": "myapp",
+#     "servers": [
+#         "web1",
+#         "web2"
+#     ],
+#     "port": 8080
+# }
+
+# Sort keys alphabetically
+print(json.dumps(data, indent=4, sort_keys=True))
+
+7. JSON vs YAML Comparison
+
+# Same data in JSON and YAML
+
+# JSON
+json_data = '''
+{
+    "name": "myapp",
+    "replicas": 3,
+    "ports": [80, 443]
+}
+'''
+
+# YAML
+yaml_data = '''
+name: myapp
+replicas: 3
+ports:
+  - 80
+  - 443
+'''
+
+# JSON is used for → APIs, AWS, logs
+# YAML is used for → K8s, Docker, CI/CD
+
+8. Real DevOps Use Cases
+✅ Read AWS Policy JSON File
+
+import json
+
+# Read AWS IAM policy
+with open('policy.json', 'r') as f:
+    policy = json.load(f)
+
+# Get all allowed actions
+for statement in policy['Statement']:
+    print(f"Effect: {statement['Effect']}")
+    print(f"Actions: {statement['Action']}")
+    print(f"Resource: {statement['Resource']}")
+
+✅ Parse API Response
+
+import requests
+import json
+
+# Call an API
+response = requests.get('https://api.github.com/users/torvalds')
+
+# Parse JSON response
+data = response.json()
+
+print(f"Name: {data['name']}")
+print(f"Location: {data['location']}")
+print(f"Public Repos: {data['public_repos']}")
+
+✅ Read Terraform State File
+
+import json
+
+# Read terraform.tfstate
+with open('terraform.tfstate', 'r') as f:
+    state = json.load(f)
+
+# Get all resources
+for resource in state['resources']:
+    print(f"Resource: {resource['type']}")
+    print(f"Name: {resource['name']}")
+
+✅ Parse AWS CLI Output
+
+import subprocess
+import json
+
+# Run AWS CLI and capture output
+result = subprocess.run(
+    ['aws', 'ec2', 'describe-instances'],
+    capture_output=True,
+    text=True
+)
+
+# Parse JSON output
+instances = json.loads(result.stdout)
+
+# Get all instance IDs
+for reservation in instances['Reservations']:
+    for instance in reservation['Instances']:
+        print(f"Instance: {instance['InstanceId']}")
+        print(f"State: {instance['State']['Name']}")
+
+✅ Create AWS Policy Automatically
+
+import json
+
+# Create IAM policy from Python
+policy = {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:DeleteObject"
+            ],
+            "Resource": "arn:aws:s3:::mybucket/*"
+        }
+    ]
+}
+
+# Save as JSON file
+with open('s3_policy.json', 'w') as f:
+    json.dump(policy, f, indent=4)
+
+print("AWS Policy created! ✅")
+
+✅ Structured Logging in JSON
+
+import json
+import datetime
+
+# Write logs in JSON format
+log_entry = {
+    'timestamp': str(datetime.datetime.now()),
+    'level': 'ERROR',
+    'service': 'myapp',
+    'message': 'Database connection failed',
+    'details': {
+        'host': 'localhost',
+        'port': 5432,
+        'error': 'Connection refused'
+    }
+}
+
+# Append to log file
+with open('app.log', 'a') as f:
+    f.write(json.dumps(log_entry) + '\n')
+
+print("Log written! ✅")
+
+✅ Config Management Per Environment
+
+import json
+import sys
+
+env = sys.argv[1]  # production or staging
+
+# Read base config
+with open('config.json', 'r') as f:
+    config = json.load(f)
+
+# Update per environment
+if env == 'production':
+    config['debug'] = False
+    config['replicas'] = 5
+    config['database']['host'] = 'prod-db.example.com'
+elif env == 'staging':
+    config['debug'] = True
+    config['replicas'] = 2
+    config['database']['host'] = 'staging-db.example.com'
+
+# Save environment config
+with open(f'config.{env}.json', 'w') as f:
+    json.dump(config, f, indent=4)
+
+print(f"Config for {env} created! ✅")
+
+9. Error Handling
+
+import json
+
+try:
+    # Try to parse JSON
+    data = json.loads('{"name": "myapp"')  # Invalid JSON
+
+except json.JSONDecodeError as e:
+    print(f"Invalid JSON! Error: {e}")
+
+
