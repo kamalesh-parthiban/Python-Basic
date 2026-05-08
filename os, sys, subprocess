@@ -2,7 +2,11 @@
 1. os, sys, subprocess   → System automation  // os + sys + subprocess  → can absolutely be done in Bash  // Python modules themselves are cross-platform.
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-os + sys + subprocess are Python modules.
+os, sys, and subprocess are built-in Python modules.
+
+They come with Python by default.
+
+-------------------------------------------------------------------------------------------------------------------------------
 
 They work on:
 -------------------------
