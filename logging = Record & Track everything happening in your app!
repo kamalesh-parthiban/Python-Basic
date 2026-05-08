@@ -1,0 +1,424 @@
+---------------------------------------------------------------------------------------------------------------------------------------------
+logging = Record & Track everything happening in your app! // logging = Track EVERYTHING happening in your app!
+Essential for debugging production issues, monitoring deployments & auditing actions! 🚀
+---------------------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Task                Code
+--------------------------------------------------------------
+Basic setup         logging.basicConfig(level, format)
+
+Log to file         logging.FileHandler('app.log')
+
+Log to screen       logging.StreamHandler()
+
+Rotate by size      RotatingFileHandler(maxBytes)
+
+Rotate by time      TimedRotatingFileHandler(when)
+
+Log exception       logger.exception("message")
+
+JSON logging        Custom JSONFormatter class
+
+Multiple loggers    logging.getLogger('name')
+---------------------------------------------------------------------------------------------------------------------------------------------
+🤔 First – What is Logging?
+
+logging = Writing messages about what your program is doing
+
+Instead of print() →  use logging!
+
+print()   →  just shows on screen, lost forever
+logging   →  saves to file, shows level, timestamp, location
+
+Logging is used for:
+
+✅ Track app behaviour
+✅ Debug errors in production
+✅ Monitor deployments
+✅ Audit trail of actions
+✅ Alert on critical errors
+✅ Troubleshoot issues
+---------------------------------------------------------------------------------------------------------------------------------------------
+1. Import
+
+# logging is built-in - no install needed!
+import logging
+---------------------------------------------------------------------------------------------------------------------------------------------
+2. Log Levels – 5 Types
+
+import logging
+
+# 5 log levels from lowest to highest
+
+logging.debug("Detailed info for debugging")      # Level 10
+logging.info("General info - app is running")     # Level 20
+logging.warning("Something unexpected happened")  # Level 30
+logging.error("Something went wrong!")            # Level 40
+logging.critical("App is going to crash!")        # Level 50
+
+# Output:
+# WARNING:root:Something unexpected happened
+# ERROR:root:Something went wrong!
+# CRITICAL:root:App is going to crash!
+---------------------------------------------------------------------------------------------------------------------------------------------
+3. Basic Configuration
+
+import logging
+
+# Basic setup
+logging.basicConfig(
+    level=logging.DEBUG,        # Show all levels
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+logging.debug("Starting app...")
+logging.info("App started!")
+logging.warning("Low memory!")
+logging.error("Database failed!")
+logging.critical("Server crashed!")
+
+# Output:
+# 2024-01-01 10:00:00 - DEBUG - Starting app...
+# 2024-01-01 10:00:00 - INFO - App started!
+# 2024-01-01 10:00:00 - WARNING - Low memory!
+# 2024-01-01 10:00:00 - ERROR - Database failed!
+# 2024-01-01 10:00:00 - CRITICAL - Server crashed!
+---------------------------------------------------------------------------------------------------------------------------------------------
+4. Log to File
+
+import logging
+
+# Save logs to file
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename='app.log',        # Save to file
+    filemode='a'               # 'a' = append, 'w' = overwrite
+)
+
+logging.info("App started!")
+logging.error("Database connection failed!")
+
+# Logs saved to app.log file
+---------------------------------------------------------------------------------------------------------------------------------------------
+5. Log to Both File & Screen
+
+import logging
+
+# Create logger
+logger = logging.getLogger('myapp')
+logger.setLevel(logging.DEBUG)
+
+# File handler - save to file
+file_handler = logging.FileHandler('app.log')
+file_handler.setLevel(logging.DEBUG)
+
+# Console handler - show on screen
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
+# Format
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+
+# Add handlers to logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+# Now log!
+logger.debug("Debug info")      # Only in file
+logger.info("App started!")     # In file & screen
+logger.error("Error occurred!") # In file & screen
+---------------------------------------------------------------------------------------------------------------------------------------------
+6. Format Options
+
+import logging
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s',
+    level=logging.DEBUG
+)
+
+# Format variables:
+# %(asctime)s    → timestamp
+# %(name)s       → logger name
+# %(levelname)s  → DEBUG, INFO, WARNING etc
+# %(filename)s   → which file logged it
+# %(lineno)d     → which line number
+# %(funcName)s   → which function
+# %(message)s    → actual log message
+# %(process)d    → process ID
+# %(thread)d     → thread ID
+---------------------------------------------------------------------------------------------------------------------------------------------
+7. Rotating Log Files
+
+import logging
+from logging.handlers import RotatingFileHandler
+
+logger = logging.getLogger('myapp')
+logger.setLevel(logging.DEBUG)
+
+# Rotate when file reaches 5MB, keep 3 backups
+handler = RotatingFileHandler(
+    'app.log',
+    maxBytes=5*1024*1024,   # 5MB
+    backupCount=3            # Keep 3 old files
+)
+
+# Files created:
+# app.log        (current)
+# app.log.1      (previous)
+# app.log.2      (older)
+# app.log.3      (oldest)
+
+formatter = logging.Formatter(
+    '%(asctime)s - %(levelname)s - %(message)s'
+)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+logger.info("This log will rotate automatically!")
+---------------------------------------------------------------------------------------------------------------------------------------------
+8. Timed Rotating Log Files
+
+import logging
+from logging.handlers import TimedRotatingFileHandler
+
+logger = logging.getLogger('myapp')
+
+# Rotate log every day at midnight
+handler = TimedRotatingFileHandler(
+    'app.log',
+    when='midnight',     # Rotate at midnight
+    interval=1,          # Every 1 day
+    backupCount=7        # Keep 7 days of logs
+)
+
+# when options:
+# 'midnight' → every day
+# 'W0'       → every Monday
+# 'h'        → every hour
+# 'm'        → every minute
+
+formatter = logging.Formatter(
+    '%(asctime)s - %(levelname)s - %(message)s'
+)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+logger.info("Daily rotating log!")
+---------------------------------------------------------------------------------------------------------------------------------------------
+9. Log Exceptions & Errors
+
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger('myapp')
+
+try:
+    result = 1 / 0
+
+except ZeroDivisionError as e:
+    # Log error with full traceback
+    logger.exception("Division error occurred!")
+    # Output includes full stack trace!
+
+try:
+    connection = connect_to_db()
+
+except Exception as e:
+    logger.error(f"DB Error: {e}", exc_info=True)
+    # exc_info=True adds traceback to log
+---------------------------------------------------------------------------------------------------------------------------------------------
+10. Multiple Loggers for Different Modules
+
+import logging
+
+# Create separate logger for each module
+db_logger = logging.getLogger('database')
+api_logger = logging.getLogger('api')
+deploy_logger = logging.getLogger('deploy')
+
+# Each logger can have different level
+db_logger.setLevel(logging.DEBUG)
+api_logger.setLevel(logging.INFO)
+deploy_logger.setLevel(logging.WARNING)
+
+# Use them separately
+db_logger.debug("DB query executed")
+api_logger.info("API call made")
+deploy_logger.warning("Deploy taking too long!")
+---------------------------------------------------------------------------------------------------------------------------------------------
+11. JSON Logging (Best for DevOps)
+
+import logging
+import json
+import datetime
+
+class JSONFormatter(logging.Formatter):
+    def format(self, record):
+        log_data = {
+            'timestamp': datetime.datetime.now().isoformat(),
+            'level': record.levelname,
+            'service': 'myapp',
+            'message': record.getMessage(),
+            'filename': record.filename,
+            'line': record.lineno
+        }
+        return json.dumps(log_data)
+
+# Setup JSON logger
+logger = logging.getLogger('myapp')
+handler = logging.FileHandler('app.json.log')
+handler.setFormatter(JSONFormatter())
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
+logger.info("App started!")
+logger.error("Database failed!")
+
+# Output in app.json.log:
+# {"timestamp": "2024-01-01T10:00:00", "level": "INFO",
+#  "service": "myapp", "message": "App started!"}
+---------------------------------------------------------------------------------------------------------------------------------------------
+12. Real DevOps Use Cases
+✅ Deployment Logger
+
+import logging
+import sys
+from logging.handlers import RotatingFileHandler
+
+# Setup deployment logger
+logger = logging.getLogger('deployment')
+logger.setLevel(logging.DEBUG)
+
+# Save to file
+file_handler = RotatingFileHandler(
+    'deployment.log',
+    maxBytes=10*1024*1024,
+    backupCount=5
+)
+
+# Show on screen
+console_handler = logging.StreamHandler(sys.stdout)
+
+formatter = logging.Formatter(
+    '%(asctime)s - %(levelname)s - %(message)s'
+)
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+# Use in deployment
+def deploy(environment):
+    logger.info(f"Starting deployment to {environment}")
+
+    try:
+        logger.debug("Pulling latest code...")
+        # git pull
+
+        logger.debug("Building docker image...")
+        # docker build
+
+        logger.debug("Pushing to registry...")
+        # docker push
+
+        logger.info(f"Deployment to {environment} successful! ✅")
+
+    except Exception as e:
+        logger.error(f"Deployment failed: {e}")
+        logger.exception("Full error details:")
+        sys.exit(1)
+
+deploy('production')
+
+✅ Server Health Monitor Logger
+
+import logging
+import subprocess
+
+logging.basicConfig(
+    filename='health.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger('health')
+
+def check_server_health():
+    # Check disk space
+    result = subprocess.run(
+        ['df', '-h', '/'],
+        capture_output=True, text=True
+    )
+    disk_usage = result.stdout.split('\n')[1].split()[4]
+    disk_percent = int(disk_usage.replace('%', ''))
+
+    if disk_percent > 90:
+        logger.critical(f"Disk usage critical: {disk_percent}%")
+    elif disk_percent > 70:
+        logger.warning(f"Disk usage high: {disk_percent}%")
+    else:
+        logger.info(f"Disk usage OK: {disk_percent}%")
+
+    # Check memory
+    result = subprocess.run(
+        ['free', '-m'],
+        capture_output=True, text=True
+    )
+    logger.info(f"Memory stats: {result.stdout}")
+
+check_server_health()
+
+✅ API Call Logger
+
+import logging
+import requests
+import time
+
+logger = logging.getLogger('api')
+logging.basicConfig(level=logging.DEBUG)
+
+def call_api(url):
+    logger.info(f"Calling API: {url}")
+    start = time.time()
+
+    try:
+        response = requests.get(url, timeout=10)
+        duration = time.time() - start
+
+        logger.info(
+            f"API Response: {response.status_code} "
+            f"in {duration:.2f}s"
+        )
+
+        if response.status_code != 200:
+            logger.warning(
+                f"Unexpected status: {response.status_code}"
+            )
+
+        return response
+
+    except requests.exceptions.Timeout:
+        logger.error(f"API timeout: {url}")
+
+    except requests.exceptions.ConnectionError:
+        logger.critical(f"Cannot connect to: {url}")
+
+call_api('https://api.example.com/health')
+---------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. RotatingFileHandler    → Auto manage log file size
+2. TimedRotatingFileHandler → Daily log rotation
+3. logger.exception()     → Log full error traceback
+4. JSON logging           → Structured logs for ELK stack
+5. Multiple loggers       → Separate logs per module
+6. Both file & console    → See & save logs together
+
+---------------------------------------------------------------------------------------------------------------------------------------------
