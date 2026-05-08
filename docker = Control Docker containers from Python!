@@ -1,0 +1,409 @@
+---------------------------------------------------------------------------------------------------------------------------------------------
+docker = Control Docker containers from Python! // docker library = Full container lifecycle management from Python!
+Build, deploy, monitor & cleanup containers all from Python scripts! 🚀
+---------------------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Category      Tasks
+----------------------------------------------------------------
+Images        build, pull, push, list, remove, tag, search
+
+Containers    run, stop, start, restart, remove, pause, rename
+
+Logs          get logs, stream live, timestamps, tail
+
+Stats         CPU, memory, network usage
+
+Exec          run commands inside container
+
+Networks      create, list, connect, disconnect, remove
+
+Volumes       create, list, remove, inspect
+
+Registry      login, push, pull private registry
+---------------------------------------------------------------------------------------------------------------------------------------------
+1. Install & Import
+
+pip install docker
+
+import docker
+---------------------------------------------------------------------------------------------------------------------------------------------
+2. Connect to Docker
+
+import docker
+
+# Connect to Docker
+client = docker.from_env()
+print("Connected to Docker! ✅")
+
+# Connect to remote Docker
+client = docker.DockerClient(base_url='tcp://192.168.1.1:2375')
+---------------------------------------------------------------------------------------------------------------------------------------------
+3. Image Tasks
+
+# Build image
+client.images.build(path='.', tag='myapp:latest')
+
+# Pull image from DockerHub
+client.images.pull('nginx:latest')
+
+# List all images
+images = client.images.list()
+for image in images:
+    print(image.tags)
+
+# Remove image
+client.images.remove('myapp:latest')
+
+# Push image to registry
+client.images.push('myrepo/myapp:latest')
+
+# Search image on DockerHub
+results = client.images.search('nginx')
+for result in results:
+    print(result['name'])
+
+# Tag image
+image = client.images.get('myapp:latest')
+image.tag('myrepo/myapp', tag='v1.0')
+
+Real DevOps Use:
+
+# Build and push to registry
+client.images.build(path='.', tag='myrepo/myapp:latest')
+client.images.push('myrepo/myapp:latest')
+print("Image pushed to registry! ✅")
+---------------------------------------------------------------------------------------------------------------------------------------------
+4. Container Tasks
+
+# Run a container
+client.containers.run(
+    'nginx',
+    detach=True,
+    ports={'80/tcp': 80}
+)
+
+# Run with environment variables
+client.containers.run(
+    'myapp:latest',
+    detach=True,
+    environment={
+        'DB_HOST': 'localhost',
+        'DB_PASSWORD': 'secret'
+    }
+)
+
+# Run with volume
+client.containers.run(
+    'nginx',
+    detach=True,
+    volumes={'/host/path': {'bind': '/container/path', 'mode': 'rw'}}
+)
+
+# List running containers
+containers = client.containers.list()
+for c in containers:
+    print(c.name, c.status)
+
+# List ALL containers (including stopped)
+containers = client.containers.list(all=True)
+
+# Get specific container
+container = client.containers.get('mycontainer')
+
+# Stop container
+container.stop()
+
+# Start container
+container.start()
+
+# Restart container
+container.restart()
+
+# Remove container
+container.remove()
+
+# Pause container
+container.pause()
+
+# Unpause container
+container.unpause()
+
+# Rename container
+container.rename('newname')
+---------------------------------------------------------------------------------------------------------------------------------------------
+5. Container Logs
+
+container = client.containers.get('mycontainer')
+
+# Get all logs
+logs = container.logs(stream=False, text=True)
+print(logs)
+
+# Get last 100 lines
+logs = container.logs(tail=100, text=True)
+print(logs)
+
+# Stream live logs
+for log in container.logs(stream=True):
+    print(log.decode('utf-8'))
+
+# Get logs with timestamps
+logs = container.logs(timestamps=True, text=True)
+print(logs)
+---------------------------------------------------------------------------------------------------------------------------------------------
+6. Container Stats & Info
+
+container = client.containers.get('mycontainer')
+
+# Get container stats (CPU, Memory)
+stats = container.stats(stream=False)
+
+# CPU usage
+print(stats['cpu_stats'])
+
+# Memory usage
+print(stats['memory_stats']['usage'])
+
+# Network stats
+print(stats['networks'])
+
+# Get container details
+info = container.attrs
+print(info['State'])             # Running/Stopped
+print(info['NetworkSettings'])   # IP, Ports
+print(info['Mounts'])            # Volumes
+print(info['Config']['Env'])     # Environment variables
+---------------------------------------------------------------------------------------------------------------------------------------------
+7. Execute Commands Inside Container
+
+container = client.containers.get('mycontainer')
+
+# Run command inside container
+exit_code, output = container.exec_run('ls -la')
+print(output.decode('utf-8'))
+
+# Run database migration
+exit_code, output = container.exec_run(
+    'python manage.py migrate'
+)
+print(output.decode('utf-8'))
+
+# Run with environment variables
+exit_code, output = container.exec_run(
+    'printenv',
+    environment={'MY_VAR': 'myvalue'}
+)
+
+# Check exit code
+if exit_code == 0:
+    print("Command successful! ✅")
+else:
+    print("Command failed! ❌")
+---------------------------------------------------------------------------------------------------------------------------------------------
+8. Network Tasks
+
+# Create network
+client.networks.create('mynetwork', driver='bridge')
+
+# List networks
+networks = client.networks.list()
+for n in networks:
+    print(n.name, n.id)
+
+# Get specific network
+network = client.networks.get('mynetwork')
+
+# Connect container to network
+network.connect('mycontainer')
+
+# Disconnect container from network
+network.disconnect('mycontainer')
+
+# Remove network
+network.remove()
+
+# Inspect network
+print(network.attrs)
+---------------------------------------------------------------------------------------------------------------------------------------------
+9. Volume Tasks
+
+# Create volume
+client.volumes.create('myvolume')
+
+# Create volume with options
+client.volumes.create(
+    name='myvolume',
+    driver='local',
+    labels={'env': 'production'}
+)
+
+# List volumes
+volumes = client.volumes.list()
+for v in volumes:
+    print(v.name)
+
+# Get specific volume
+volume = client.volumes.get('myvolume')
+
+# Remove volume
+volume.remove()
+
+# Inspect volume
+print(volume.attrs)
+---------------------------------------------------------------------------------------------------------------------------------------------
+10. Registry – Push & Pull
+
+# Login to registry
+client.login(
+    username='myuser',
+    password='mypassword',
+    registry='https://index.docker.io/v1/'
+)
+
+# Pull from private registry
+client.images.pull('myprivateregistry.com/myapp:latest')
+
+# Push to private registry
+client.images.push('myprivateregistry.com/myapp:latest')
+
+# Pull from AWS ECR
+client.images.pull(
+    '123456789.dkr.ecr.us-east-1.amazonaws.com/myapp:latest'
+)
+---------------------------------------------------------------------------------------------------------------------------------------------
+11. Real DevOps Use Cases
+✅ Full Deploy Script
+
+import docker
+
+client = docker.from_env()
+
+# Step 1 - Pull latest image
+print("Pulling latest image...")
+client.images.pull('myrepo/myapp:latest')
+
+# Step 2 - Stop old container
+try:
+    old = client.containers.get('myapp')
+    print("Stopping old container...")
+    old.stop()
+    old.remove()
+except:
+    print("No old container found")
+
+# Step 3 - Run new container
+print("Starting new container...")
+client.containers.run(
+    'myrepo/myapp:latest',
+    name='myapp',
+    detach=True,
+    ports={'8080/tcp': 8080},
+    environment={
+        'DB_HOST': 'localhost',
+        'DB_PASSWORD': 'secret'
+    },
+    restart_policy={'Name': 'always'}
+)
+
+print("Deployment Done! ✅")
+
+✅ Monitor All Containers
+
+import docker
+
+client = docker.from_env()
+
+# Check all containers
+containers = client.containers.list(all=True)
+
+for container in containers:
+    stats = container.stats(stream=False)
+    memory = stats['memory_stats']['usage']
+    print(f"Container: {container.name}")
+    print(f"Status: {container.status}")
+    print(f"Memory: {memory / 1024 / 1024:.2f} MB")
+    print("---")
+
+✅ Auto Cleanup Old Containers & Images
+
+import docker
+
+client = docker.from_env()
+
+# Remove stopped containers
+containers = client.containers.list(all=True)
+for container in containers:
+    if container.status == 'exited':
+        container.remove()
+        print(f"Removed container: {container.name}")
+
+# Remove unused images
+images = client.images.list()
+for image in images:
+    if not image.tags:
+        client.images.remove(image.id)
+        print(f"Removed image: {image.id}")
+
+print("Cleanup done! ✅")
+
+✅ Build & Push to AWS ECR
+
+import docker
+import boto3
+import base64
+
+# Get ECR login token
+ecr = boto3.client('ecr', region_name='us-east-1')
+token = ecr.get_authorization_token()
+
+# Decode credentials
+credentials = base64.b64decode(
+    token['authorizationData'][0]['authorizationToken']
+).decode('utf-8')
+username, password = credentials.split(':')
+registry = token['authorizationData'][0]['proxyEndpoint']
+
+# Login to ECR
+client = docker.from_env()
+client.login(username=username, password=password, registry=registry)
+
+# Build image
+client.images.build(path='.', tag=f'{registry}/myapp:latest')
+
+# Push to ECR
+client.images.push(f'{registry}/myapp:latest')
+
+print("Image pushed to AWS ECR! ✅")
+---------------------------------------------------------------------------------------------------------------------------------------------
+12. Error Handling
+
+import docker
+
+try:
+    client = docker.from_env()
+    container = client.containers.get('mycontainer')
+    container.start()
+
+except docker.errors.NotFound:
+    print("ERROR: Container not found!")
+
+except docker.errors.APIError as e:
+    print(f"ERROR: Docker API error: {e}")
+
+except docker.errors.BuildError as e:
+    print(f"ERROR: Build failed: {e}")
+
+except Exception as e:
+    print(f"ERROR: {e}")
+---------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. client.images.build()        → Build new image
+2. client.images.pull()         → Pull latest image
+3. client.containers.run()      → Start container
+4. container.stop()             → Stop container
+5. container.logs()             → Check container logs
+6. container.exec_run()         → Run commands inside
+7. client.images.push()         → Push to registry
+---------------------------------------------------------------------------------------------------------------------------------------------
