@@ -45,13 +45,13 @@ paramiko is used for:
 ✅ Download files from servers (SFTP)
 ✅ Automate server management
 ✅ Deploy applications remotely
-
+---------------------------------------------------------------------------------------------------------------
 1. Install & Import
 
 pip install paramiko
 
 import paramiko
-
+---------------------------------------------------------------------------------------------------------------
 2. Basic SSH Connection
 
 import paramiko
@@ -73,7 +73,7 @@ print("Connected! ✅")
 
 # Close connection
 ssh.close()
-
+---------------------------------------------------------------------------------------------------------------
 3. Connect with SSH Key (More Secure)
 
 import paramiko
@@ -90,7 +90,7 @@ ssh.connect(
 
 print("Connected with SSH key! ✅")
 ssh.close()
-
+---------------------------------------------------------------------------------------------------------------
 4. Run Commands on Remote Server
 
 import paramiko
@@ -110,7 +110,7 @@ print("Output:", output)
 print("Error:", error)
 
 ssh.close()
-
+---------------------------------------------------------------------------------------------------------------
 5. Run Multiple Commands
 
 import paramiko
@@ -141,7 +141,7 @@ for cmd in commands:
 
 print("All commands done! ✅")
 ssh.close()
-
+---------------------------------------------------------------------------------------------------------------
 6. Check Command Exit Code
 
 import paramiko
@@ -161,7 +161,7 @@ else:
     print("nginx is NOT running! ❌")
 
 ssh.close()
-
+---------------------------------------------------------------------------------------------------------------
 7. SFTP – Upload Files to Server
 
 import paramiko
@@ -182,7 +182,7 @@ sftp.put('deploy.sh', '/opt/deploy.sh')
 
 sftp.close()
 ssh.close()
-
+---------------------------------------------------------------------------------------------------------------
 8. SFTP – Download Files from Server
 
 import paramiko
@@ -202,7 +202,7 @@ sftp.get('/etc/nginx/nginx.conf', 'nginx.conf')
 
 sftp.close()
 ssh.close()
-
+---------------------------------------------------------------------------------------------------------------
 9. SFTP – File Operations on Remote Server
 
 import paramiko
@@ -232,7 +232,7 @@ print(f"File size: {stat.st_size} bytes")
 
 sftp.close()
 ssh.close()
-
+---------------------------------------------------------------------------------------------------------------
 10. Real DevOps Use Cases
 ✅ Deploy Application to Server
 
@@ -369,7 +369,7 @@ sftp.get(f'/tmp/{backup_file}', f'backups/{backup_file}')
 sftp.close()
 ssh.close()
 print(f"Database backup downloaded: {backup_file} ✅")
-
+---------------------------------------------------------------------------------------------------------------
 11. Error Handling
 
 import paramiko
@@ -399,7 +399,7 @@ except Exception as e:
 
 finally:
     ssh.close()
-
+---------------------------------------------------------------------------------------------------------------
 💡 Most Used in DevOps
 
 1. SSH into servers          → Manage remote servers
