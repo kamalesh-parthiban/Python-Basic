@@ -1,0 +1,303 @@
+----------------------------------------------------------------------------------------------------------------------------------
+requests = Make HTTP calls to any API or Website!
+---------------------------------------------------------------------------------------------------------------------------------
+requests is a Python library.
+
+Install:
+----------------
+pip install requests
+
+📊 Summary Table
+
+Task               | Code
+-------------------|---------------------------------------------------
+Fetch data         | requests.get(url)
+
+Send data          | requests.post(url, json=data)
+
+Update data        | requests.put(url, json=data)
+
+Delete data        | requests.delete(url)
+
+With headers       | requests.get(url, headers=headers)
+
+With auth          | requests.get(url, auth=(user, pass))
+
+With params        | requests.get(url, params=params)
+
+Upload file        | requests.post(url, files={'file': f})
+
+Download file      | response.content
+
+Timeout            | requests.get(url, timeout=10)
+
+Error handling     | response.raise_for_status()
+
+Reuse connection   | requests.Session()
+---------------------------------------------------------------------------------------------------------------------------------
+1. Basic HTTP Methods
+
+import requests
+
+# GET  - Fetch/Read data
+requests.get('https://api.example.com/users')
+
+# POST - Send/Create data
+requests.post('https://api.example.com/users')
+
+# PUT - Update entire data
+requests.put('https://api.example.com/users/1')
+
+# PATCH - Update partial data
+requests.patch('https://api.example.com/users/1')
+
+# DELETE - Delete data
+requests.delete('https://api.example.com/users/1')
+---------------------------------------------------------------------------------------------------------------------------------
+2. GET Request – Fetch Data
+
+import requests
+
+# Simple GET
+response = requests.get('https://api.github.com/users/torvalds')
+
+# Get status code
+print(response.status_code)   # 200 = success, 404 = not found
+
+# Get response as JSON
+data = response.json()
+print(data['name'])
+print(data['location'])
+
+# Get response as text
+print(response.text)
+
+# Get response headers
+print(response.headers)
+
+# Check if request was successful
+if response.status_code == 200:
+    print("Success!")
+else:
+    print("Failed!")
+---------------------------------------------------------------------------------------------------------------------------------
+3. GET with Parameters
+
+# Send parameters in URL
+params = {
+    'page': 1,
+    'limit': 10,
+    'status': 'active'
+}
+
+response = requests.get(
+    'https://api.example.com/users',
+    params=params
+)
+
+# This calls:
+# https://api.example.com/users?page=1&limit=10&status=active
+print(response.json())
+---------------------------------------------------------------------------------------------------------------------------------
+4. POST Request – Send Data
+
+# Send JSON data
+data = {
+    'name': 'John',
+    'email': 'john@example.com',
+    'role': 'developer'
+}
+
+response = requests.post(
+    'https://api.example.com/users',
+    json=data    # automatically sets Content-Type to JSON
+)
+
+print(response.status_code)  # 201 = created
+print(response.json())       # response from server
+---------------------------------------------------------------------------------------------------------------------------------
+5. Headers & Authentication
+
+# Send custom headers
+headers = {
+    'Authorization': 'Bearer mytoken123',
+    'Content-Type': 'application/json',
+    'X-API-Key': 'myapikey'
+}
+
+response = requests.get(
+    'https://api.example.com/data',
+    headers=headers
+)
+
+# Basic authentication
+response = requests.get(
+    'https://api.example.com/data',
+    auth=('username', 'password')
+)
+
+# Token authentication
+headers = {'Authorization': f'Token {my_token}'}
+response = requests.get(
+    'https://api.example.com/data',
+    headers=headers
+)
+---------------------------------------------------------------------------------------------------------------------------------
+6. PUT & PATCH – Update Data
+
+# PUT - Update entire record
+data = {
+    'name': 'John Updated',
+    'email': 'john.new@example.com'
+}
+
+response = requests.put(
+    'https://api.example.com/users/1',
+    json=data
+)
+print(response.json())
+
+# PATCH - Update only one field
+response = requests.patch(
+    'https://api.example.com/users/1',
+    json={'email': 'newemail@example.com'}
+)
+print(response.json())
+---------------------------------------------------------------------------------------------------------------------------------
+7. DELETE Request
+
+# Delete a record
+response = requests.delete('https://api.example.com/users/1')
+
+print(response.status_code)  # 204 = deleted successfully
+
+if response.status_code == 204:
+    print("User deleted!")
+---------------------------------------------------------------------------------------------------------------------------------
+8. File Upload & Download
+
+# Upload a file
+with open('report.pdf', 'rb') as f:
+    response = requests.post(
+        'https://api.example.com/upload',
+        files={'file': f}
+    )
+print(response.json())
+
+# Download a file
+response = requests.get('https://example.com/largefile.zip')
+with open('largefile.zip', 'wb') as f:
+    f.write(response.content)
+print("File downloaded!")
+
+# Download large file in chunks
+response = requests.get(
+    'https://example.com/largefile.zip',
+    stream=True
+)
+with open('largefile.zip', 'wb') as f:
+    for chunk in response.iter_content(chunk_size=8192):
+        f.write(chunk)
+print("Large file downloaded!")
+---------------------------------------------------------------------------------------------------------------------------------
+9. Timeout & Retry
+
+# Set timeout (seconds)
+response = requests.get(
+    'https://api.example.com',
+    timeout=10    # fail if no response in 10 seconds
+)
+
+# Timeout for connect & read separately
+response = requests.get(
+    'https://api.example.com',
+    timeout=(5, 30)  # 5s connect, 30s read
+)
+---------------------------------------------------------------------------------------------------------------------------------
+10. Error Handling
+
+import requests
+
+try:
+    response = requests.get(
+        'https://api.example.com/data',
+        timeout=10
+    )
+
+    # Raise error if status is 4xx or 5xx
+    response.raise_for_status()
+
+    data = response.json()
+    print("Success:", data)
+
+except requests.exceptions.ConnectionError:
+    print("ERROR: Cannot connect to server!")
+
+except requests.exceptions.Timeout:
+    print("ERROR: Request timed out!")
+
+except requests.exceptions.HTTPError as e:
+    print(f"ERROR: HTTP error {e}")
+
+except requests.exceptions.RequestException as e:
+    print(f"ERROR: Something went wrong {e}")
+---------------------------------------------------------------------------------------------------------------------------------
+11. Session – Reuse Connection
+
+# Use session for multiple requests to same server
+session = requests.Session()
+
+# Set common headers once
+session.headers.update({
+    'Authorization': 'Bearer mytoken',
+    'Content-Type': 'application/json'
+})
+
+# All requests use same session & headers
+response1 = session.get('https://api.example.com/users')
+response2 = session.get('https://api.example.com/orders')
+response3 = session.post('https://api.example.com/deploy')
+
+session.close()
+---------------------------------------------------------------------------------------------------------------------------------
+12. Real DevOps Use Cases
+
+import requests
+
+# 1. Trigger Jenkins build
+response = requests.post(
+    'https://jenkins.example.com/job/myapp/build',
+    auth=('admin', 'password')
+)
+print("Jenkins build triggered!")
+
+# 2. Send Slack notification
+requests.post(
+    'https://hooks.slack.com/services/xxx/yyy/zzz',
+    json={'text': '🚀 Deployment successful!'}
+)
+
+# 3. Call GitHub API - create issue
+headers = {'Authorization': 'token mytoken'}
+requests.post(
+    'https://api.github.com/repos/user/repo/issues',
+    headers=headers,
+    json={
+        'title': 'Bug found in production',
+        'body': 'Details here...'
+    }
+)
+
+# 4. Check website health
+response = requests.get('https://myapp.com/health')
+if response.status_code != 200:
+    print("ALERT: Website is down!")
+
+# 5. Call Kubernetes API
+response = requests.get(
+    'https://k8s-cluster/api/v1/pods',
+    headers={'Authorization': f'Bearer {k8s_token}'},
+    verify=False
+)
+print(response.json())
+---------------------------------------------------------------------------------------------------------------------------------
