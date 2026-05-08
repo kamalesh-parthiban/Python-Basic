@@ -1,0 +1,504 @@
+------------------------------------------------------------------------------------------------------------------------------------------------
+Function = Reusable block of code!
+Write once → Use anywhere! Every DevOps script uses functions to avoid repetition & stay organized! 🚀
+------------------------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Feature           Code
+----------------------------------------------------------------
+Basic function    def name():
+
+With params       def name(param1, param2):
+
+Default params    def name(param='default'):
+
+Return value      return value
+
+Return multiple   return a, b, c
+
+Keyword args      name(param='value')
+
+Any args          def name(*args):
+
+Any kwargs        def name(**kwargs):
+
+Call function     name(argument)
+------------------------------------------------------------------------------------------------------------------------------------------------
+🤔 What is a Function?
+Think of Function as a Machine ⚙️
+
+Coffee Machine:
+→ You put coffee beans (INPUT)
+→ Machine does its work
+→ You get coffee (OUTPUT)
+
+Function:
+→ You give data (INPUT/PARAMETERS)
+→ Function does its work
+→ You get result (OUTPUT/RETURN)
+
+# Without function - repetitive!
+print("Connecting to web1...")
+subprocess.run(['ssh', 'web1'])
+print("Deploying to web1...")
+
+print("Connecting to web2...")
+subprocess.run(['ssh', 'web2'])
+print("Deploying to web2...")
+
+# With function - clean & reusable!
+def deploy(server):
+    print(f"Connecting to {server}...")
+    subprocess.run(['ssh', server])
+    print(f"Deploying to {server}...")
+
+deploy('web1')
+deploy('web2')
+------------------------------------------------------------------------------------------------------------------------------------------------
+1. Create Basic Function
+
+# Define function
+def greet():
+    print("Hello DevOps!")
+
+# Call function
+greet()
+# Output: Hello DevOps!
+
+# Function runs only when called
+# Can be called multiple times
+greet()
+greet()
+greet()
+------------------------------------------------------------------------------------------------------------------------------------------------
+2. Function with Parameters
+
+# Parameters = inputs to function
+def deploy(server):
+    print(f"Deploying to {server}...")
+
+# Call with argument
+deploy('web1')      # server = 'web1'
+deploy('web2')      # server = 'web2'
+deploy('web3')      # server = 'web3'
+
+# Multiple parameters
+def deploy(server, version, env):
+    print(f"Deploying {version} to {server} in {env}")
+
+deploy('web1', 'v2.0', 'production')
+deploy('web2', 'v1.5', 'staging')
+------------------------------------------------------------------------------------------------------------------------------------------------
+3. Function with Default Parameters
+
+# Default value if not provided
+def deploy(server, version='latest', env='staging'):
+    print(f"Deploying {version} to {server} in {env}")
+
+# Use default values
+deploy('web1')
+# Deploying latest to web1 in staging
+
+# Override defaults
+deploy('web1', 'v2.0', 'production')
+# Deploying v2.0 to web1 in production
+
+# Override some defaults
+deploy('web1', 'v2.0')
+# Deploying v2.0 to web1 in staging
+------------------------------------------------------------------------------------------------------------------------------------------------
+4. Function with Return Value
+
+# Return = send result back
+
+def get_server_status(server):
+    # Check server
+    result = subprocess.run(
+        ['ping', '-c', '1', server],
+        capture_output=True
+    )
+
+    if result.returncode == 0:
+        return 'running'    # Send back 'running'
+    else:
+        return 'down'       # Send back 'down'
+
+# Use returned value
+status = get_server_status('192.168.1.1')
+print(status)       # running or down
+
+if status == 'running':
+    print("Server is up!")
+------------------------------------------------------------------------------------------------------------------------------------------------
+5. Return Multiple Values
+
+def get_server_info(server):
+    # Return multiple values
+    ip      = '192.168.1.1'
+    port    = 8080
+    status  = 'running'
+    return ip, port, status     # Returns tuple
+
+# Unpack returned values
+ip, port, status = get_server_info('web1')
+print(ip)       # 192.168.1.1
+print(port)     # 8080
+print(status)   # running
+------------------------------------------------------------------------------------------------------------------------------------------------
+6. Keyword Arguments
+
+def deploy(server, version, env, replicas):
+    print(f"Deploying {version} to {server}")
+    print(f"Env: {env}, Replicas: {replicas}")
+
+# Normal way - order matters!
+deploy('web1', 'v2.0', 'production', 5)
+
+# Keyword way - order doesn't matter!
+deploy(
+    env='production',
+    replicas=5,
+    server='web1',
+    version='v2.0'
+)
+------------------------------------------------------------------------------------------------------------------------------------------------
+7. Args & Kwargs
+
+# *args - accept any number of arguments
+def deploy_all(*servers):
+    for server in servers:
+        print(f"Deploying to {server}...")
+
+deploy_all('web1')
+deploy_all('web1', 'web2')
+deploy_all('web1', 'web2', 'web3', 'web4')
+
+# **kwargs - accept any keyword arguments
+def create_server(**config):
+    for key, value in config.items():
+        print(f"{key}: {value}")
+
+create_server(
+    host='192.168.1.1',
+    port=8080,
+    env='production',
+    debug=False
+)
+------------------------------------------------------------------------------------------------------------------------------------------------
+8. Real DevOps Use Cases
+✅ SSH Deploy Function
+
+import paramiko
+
+def deploy_to_server(
+    server,
+    username='ubuntu',
+    key_file='~/.ssh/id_rsa',
+    commands=None
+):
+    if commands is None:
+        commands = [
+            'git pull origin main',
+            'pip install -r requirements.txt',
+            'sudo systemctl restart myapp'
+        ]
+
+    print(f"\nDeploying to {server}...")
+
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(
+            paramiko.AutoAddPolicy()
+        )
+        ssh.connect(
+            server,
+            username=username,
+            key_filename=key_file
+        )
+
+        for cmd in commands:
+            print(f"  Running: {cmd}")
+            stdin, stdout, stderr = ssh.exec_command(cmd)
+            exit_code = stdout.channel.recv_exit_status()
+
+            if exit_code != 0:
+                error = stderr.read().decode('utf-8')
+                raise Exception(f"Command failed: {error}")
+
+        ssh.close()
+        print(f"  ✅ {server} deployed successfully!")
+        return True
+
+    except Exception as e:
+        print(f"  ❌ {server} failed: {e}")
+        return False
+
+# Use function
+servers = ['192.168.1.1', '192.168.1.2', '192.168.1.3']
+
+for server in servers:
+    success = deploy_to_server(server)
+    if not success:
+        print(f"Alert: {server} deployment failed!")
+
+✅ Health Check Function
+
+import requests
+import subprocess
+
+def check_http_health(url, timeout=5):
+    try:
+        response = requests.get(url, timeout=timeout)
+        if response.status_code == 200:
+            return True, f"OK ({response.status_code})"
+        else:
+            return False, f"Bad status ({response.status_code})"
+    except requests.exceptions.ConnectionError:
+        return False, "Connection refused"
+    except requests.exceptions.Timeout:
+        return False, "Timeout"
+
+def check_ping(server):
+    result = subprocess.run(
+        ['ping', '-c', '1', server],
+        capture_output=True
+    )
+    if result.returncode == 0:
+        return True, "Reachable"
+    else:
+        return False, "Unreachable"
+
+def check_disk_space(threshold=80):
+    result = subprocess.run(
+        ['df', '-h', '/'],
+        capture_output=True,
+        text=True
+    )
+    usage = int(
+        result.stdout.split('\n')[1]
+        .split()[4].replace('%','')
+    )
+    if usage > threshold:
+        return False, f"Disk {usage}% full!"
+    return True, f"Disk {usage}% used"
+
+# Use functions
+servers = [
+    'http://web1.example.com',
+    'http://web2.example.com'
+]
+
+for server in servers:
+    ok, msg = check_http_health(server)
+    status  = "✅" if ok else "❌"
+    print(f"{status} {server}: {msg}")
+
+ok, msg = check_disk_space(threshold=80)
+print(f"Disk: {msg}")
+
+✅ Docker Functions
+
+import docker
+
+client = docker.from_env()
+
+def build_image(path, tag):
+    print(f"Building image {tag}...")
+    try:
+        client.images.build(path=path, tag=tag)
+        print(f"✅ Image {tag} built!")
+        return True
+    except Exception as e:
+        print(f"❌ Build failed: {e}")
+        return False
+
+def stop_container(name):
+    try:
+        container = client.containers.get(name)
+        container.stop()
+        container.remove()
+        print(f"✅ Container {name} stopped!")
+        return True
+    except docker.errors.NotFound:
+        print(f"Container {name} not found")
+        return False
+
+def start_container(image, name, port):
+    try:
+        client.containers.run(
+            image,
+            name=name,
+            detach=True,
+            ports={f'{port}/tcp': port},
+            restart_policy={'Name': 'always'}
+        )
+        print(f"✅ Container {name} started!")
+        return True
+    except Exception as e:
+        print(f"❌ Start failed: {e}")
+        return False
+
+def deploy_container(image, name, port):
+    print(f"\nDeploying {name}...")
+    stop_container(name)            # Stop old
+    if build_image('.', image):     # Build new
+        start_container(            # Start new
+            image, name, port
+        )
+
+# Use functions
+deploy_container('myapp:latest', 'myapp', 8080)
+
+✅ AWS Functions
+
+import boto3
+
+ec2 = boto3.client('ec2', region_name='us-east-1')
+s3  = boto3.client('s3')
+
+def get_running_instances():
+    response  = ec2.describe_instances(
+        Filters=[{
+            'Name':   'instance-state-name',
+            'Values': ['running']
+        }]
+    )
+    instances = []
+    for r in response['Reservations']:
+        for i in r['Instances']:
+            instances.append({
+                'id':   i['InstanceId'],
+                'type': i['InstanceType'],
+                'ip':   i.get('PublicIpAddress', 'N/A')
+            })
+    return instances
+
+def stop_instance(instance_id):
+    try:
+        ec2.stop_instances(InstanceIds=[instance_id])
+        print(f"✅ Stopped {instance_id}")
+        return True
+    except Exception as e:
+        print(f"❌ Failed to stop {instance_id}: {e}")
+        return False
+
+def upload_to_s3(file_path, bucket, key):
+    try:
+        s3.upload_file(file_path, bucket, key)
+        print(f"✅ Uploaded {file_path} to s3://{bucket}/{key}")
+        return True
+    except Exception as e:
+        print(f"❌ Upload failed: {e}")
+        return False
+
+def backup_logs(log_dir, bucket):
+    import os
+    backed_up = 0
+    for file in os.listdir(log_dir):
+        if file.endswith('.log'):
+            file_path = os.path.join(log_dir, file)
+            if upload_to_s3(file_path, bucket, f'logs/{file}'):
+                backed_up += 1
+    print(f"Backed up {backed_up} log files!")
+    return backed_up
+
+# Use functions
+instances = get_running_instances()
+for instance in instances:
+    print(f"Instance: {instance['id']} - {instance['ip']}")
+
+backup_logs('/var/log', 'my-backup-bucket')
+
+✅ Kubernetes Functions
+
+from kubernetes import client, config
+
+config.load_kube_config()
+apps_v1 = client.AppsV1Api()
+v1      = client.CoreV1Api()
+
+def get_deployment_status(name, namespace='default'):
+    try:
+        deployment = apps_v1.read_namespaced_deployment(
+            name=name,
+            namespace=namespace
+        )
+        return {
+            'name':      name,
+            'replicas':  deployment.spec.replicas,
+            'available': deployment.status.available_replicas,
+            'ready':     deployment.status.ready_replicas
+        }
+    except Exception as e:
+        return None
+
+def scale_deployment(name, replicas, namespace='default'):
+    try:
+        deployment = apps_v1.read_namespaced_deployment(
+            name=name,
+            namespace=namespace
+        )
+        deployment.spec.replicas = replicas
+        apps_v1.patch_namespaced_deployment(
+            name=name,
+            namespace=namespace,
+            body=deployment
+        )
+        print(f"✅ Scaled {name} to {replicas} replicas!")
+        return True
+    except Exception as e:
+        print(f"❌ Scale failed: {e}")
+        return False
+
+def update_image(name, image, namespace='default'):
+    try:
+        deployment = apps_v1.read_namespaced_deployment(
+            name=name,
+            namespace=namespace
+        )
+        deployment.spec.template.spec\
+            .containers[0].image = image
+        apps_v1.patch_namespaced_deployment(
+            name=name,
+            namespace=namespace,
+            body=deployment
+        )
+        print(f"✅ Updated {name} image to {image}!")
+        return True
+    except Exception as e:
+        print(f"❌ Update failed: {e}")
+        return False
+
+def get_failed_pods(namespace='default'):
+    pods        = v1.list_namespaced_pod(
+        namespace=namespace
+    )
+    failed      = []
+    for pod in pods.items:
+        if pod.status.phase == 'Failed':
+            failed.append(pod.metadata.name)
+    return failed
+
+# Use functions
+status = get_deployment_status('myapp')
+if status:
+    print(f"Replicas: {status['available']}/{status['replicas']}")
+
+scale_deployment('myapp', replicas=5)
+update_image('myapp', 'myapp:v2.0')
+
+failed_pods = get_failed_pods()
+for pod in failed_pods:
+    print(f"Failed pod: {pod}")
+------------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. deploy(server)           →  Reusable deploy logic
+2. check_health(url)        →  Health check any server
+3. get_instances()          →  Fetch AWS resources
+4. scale_deployment(name)   →  Scale k8s deployment
+5. upload_to_s3(file)       →  Backup files
+6. stop_container(name)     →  Manage containers
+7. send_alert(message)      →  Notifications
+8. backup_logs(dir)         →  Log management
+------------------------------------------------------------------------------------------------------------------------------------------------
