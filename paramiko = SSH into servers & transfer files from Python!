@@ -2,6 +2,30 @@
 paramiko = SSH into servers & transfer files from Python! // paramiko = Full SSH & SFTP control from Python!
 Automate ANY task on remote servers without manually logging in! 🚀
 -----------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Task                     Code
+---------------------------------------------------------------
+SSH connect password     ssh.connect(host, username, password)
+
+SSH connect key          ssh.connect(host, username, key_filename)
+
+Run command              ssh.exec_command('command')
+
+Get output               stdout.read().decode('utf-8')
+
+Check exit code          stdout.channel.recv_exit_status()
+
+Upload file              sftp.put('local', 'remote')
+
+Download file            sftp.get('remote', 'local')
+
+List remote files        sftp.listdir('/path')
+
+Delete remote file       sftp.remove('/path/file')
+
+Create remote dir        sftp.mkdir('/path/newdir')
+-----------------------------------------------------------------------------------------------------------------------------------
 🤔 First – What is paramiko?
 
 paramiko = SSH client for Python
