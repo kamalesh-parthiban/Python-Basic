@@ -1,0 +1,438 @@
+--------------------------------------------------------------------------------------------------------------------------------------------
+While Loop = Keep doing UNTIL condition met!
+Perfect for waiting, retrying & monitoring — the most common tasks in DevOps automation! 🚀
+--------------------------------------------------------------------------------------------------------------------------------------------
+For Loop vs While Loop
+
+Feature        For Loop                     While Loop
+----------------------------------------------------------------
+Use when       Know how many items          Know condition
+
+Best for       Lists, collections           Waiting, retrying
+
+Runs           Fixed number of times        Until condition false
+
+Example        Loop through servers         Wait for server up
+
+Risk           No infinite loop             Can loop forever
+---------------------------------------------------------------------------------
+Summary Table
+
+Feature           Code
+------------------------------------------------
+Basic while       while condition:
+
+Forever loop      while True:
+
+Stop loop         break
+
+Skip item         continue
+
+After loop        else:
+
+Retry logic       while attempt < max:
+
+Wait logic        while waited < max:
+
+Queue process     while queue:
+------------------------------------------------------------------------------
+
+
+🤔 What is While Loop?
+Think of While Loop as a Security Guard 💂
+
+Security Guard checks:
+WHILE door is open → keep watching
+WHILE intruder detected → keep alerting
+WHILE shift not over → keep working
+
+While Loop does:
+WHILE condition is TRUE → keep running
+WHILE condition is FALSE → stop
+
+# For Loop   → knows HOW MANY times to run
+# While Loop → runs UNTIL condition is FALSE
+
+# For Loop
+for i in range(5):
+    print(i)        # Runs exactly 5 times
+
+# While Loop
+i = 0
+while i < 5:
+    print(i)        # Runs UNTIL i reaches 5
+    i += 1
+--------------------------------------------------------------------------------------------------------------------------------------------
+1. Basic While Loop
+
+# Simple while loop
+count = 1
+
+while count <= 5:
+    print(f"Count: {count}")
+    count += 1      # Increase count
+
+# Output:
+# Count: 1
+# Count: 2
+# Count: 3
+# Count: 4
+# Count: 5
+
+2. While with Break
+
+# Break stops the loop
+count = 1
+
+while True:         # Runs forever
+    print(f"Count: {count}")
+    count += 1
+
+    if count > 5:
+        break       # Stop when count > 5
+
+# Output:
+# Count: 1
+# Count: 2
+# Count: 3
+# Count: 4
+# Count: 5
+--------------------------------------------------------------------------------------------------------------------------------------------
+3. While with Continue
+
+count = 0
+
+while count < 10:
+    count += 1
+
+    if count % 2 == 0:  # Skip even numbers
+        continue
+
+    print(f"Odd number: {count}")
+
+# Output:
+# Odd number: 1
+# Odd number: 3
+# Odd number: 5
+# Odd number: 7
+# Odd number: 9
+--------------------------------------------------------------------------------------------------------------------------------------------
+4. While with Else
+
+count = 0
+
+while count < 3:
+    print(f"Count: {count}")
+    count += 1
+else:
+    # Runs when while condition becomes FALSE
+    print("Loop completed!")
+
+# Output:
+# Count: 0
+# Count: 1
+# Count: 2
+# Loop completed!
+--------------------------------------------------------------------------------------------------------------------------------------------
+5. Infinite Loop (Run Forever)
+
+import time
+
+# Run forever until manually stopped
+while True:
+    print("Monitoring server...")
+    time.sleep(60)  # Wait 60 seconds
+
+# Used for:
+# Monitoring scripts
+# Health checks
+# Background services
+--------------------------------------------------------------------------------------------------------------------------------------------
+6. For Loop vs While Loop
+
+servers = ['web1', 'web2', 'web3']
+
+# FOR LOOP - know how many items
+for server in servers:
+    print(f"Deploying to {server}")
+
+# WHILE LOOP - keep going until condition met
+index = 0
+while index < len(servers):
+    print(f"Deploying to {servers[index]}")
+    index += 1
+
+# Both give same output!
+# But For Loop is cleaner for collections
+# While Loop is better for conditions
+--------------------------------------------------------------------------------------------------------------------------------------------
+7. Real DevOps Use Cases
+✅ Retry Until Success
+
+import subprocess
+import time
+
+max_retries = 5
+attempt     = 0
+success     = False
+
+while attempt < max_retries:
+    attempt += 1
+    print(f"Attempt {attempt}/{max_retries}...")
+
+    try:
+        result = subprocess.run(
+            ['git', 'pull', 'origin', 'main'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        print("✅ Git pull successful!")
+        success = True
+        break   # Exit loop on success
+
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed: {e}")
+        if attempt < max_retries:
+            print("Retrying in 5 seconds...")
+            time.sleep(5)
+
+if not success:
+    print("❌ All retries failed!")
+
+✅ Wait for Server to Start
+
+import requests
+import time
+
+server_url  = 'http://192.168.1.1:8080/health'
+max_wait    = 60    # Maximum 60 seconds
+waited      = 0
+
+print("Waiting for server to start...")
+
+while waited < max_wait:
+    try:
+        response = requests.get(server_url, timeout=5)
+
+        if response.status_code == 200:
+            print(f"✅ Server is up! (waited {waited}s)")
+            break
+
+    except requests.exceptions.ConnectionError:
+        print(f"Server not ready... ({waited}s)")
+
+    time.sleep(5)
+    waited += 5
+
+else:
+    print(f"❌ Server not started after {max_wait}s!")
+
+✅ Wait for Docker Container
+
+import docker
+import time
+
+client      = docker.from_env()
+container   = client.containers.get('myapp')
+max_wait    = 60
+waited      = 0
+
+print("Waiting for container to be ready...")
+
+while waited < max_wait:
+    container.reload()  # Refresh status
+
+    if container.status == 'running':
+        print(f"✅ Container running! (waited {waited}s)")
+        break
+    elif container.status == 'exited':
+        print("❌ Container exited unexpectedly!")
+        break
+    else:
+        print(f"Status: {container.status}... ({waited}s)")
+        time.sleep(3)
+        waited += 3
+else:
+    print(f"❌ Container not ready after {max_wait}s!")
+
+✅ Wait for Kubernetes Pod
+
+from kubernetes import client, config
+import time
+
+config.load_kube_config()
+v1          = client.CoreV1Api()
+pod_name    = 'myapp-pod'
+max_wait    = 120
+waited      = 0
+
+print(f"Waiting for {pod_name} to be ready...")
+
+while waited < max_wait:
+    pod    = v1.read_namespaced_pod(
+        name=pod_name,
+        namespace='default'
+    )
+    status = pod.status.phase
+
+    if status == 'Running':
+        print(f"✅ Pod is running! (waited {waited}s)")
+        break
+    elif status == 'Failed':
+        print(f"❌ Pod failed!")
+        break
+    else:
+        print(f"Pod status: {status}... ({waited}s)")
+        time.sleep(5)
+        waited += 5
+else:
+    print(f"❌ Pod not ready after {max_wait}s!")
+
+✅ Continuous Health Monitor
+
+import requests
+import time
+import datetime
+
+servers = [
+    'http://web1.example.com/health',
+    'http://web2.example.com/health',
+    'http://web3.example.com/health'
+]
+
+down_servers = set()
+
+print("Starting continuous health monitor...")
+print("Press Ctrl+C to stop\n")
+
+while True:
+    timestamp = datetime.datetime.now().strftime('%H:%M:%S')
+    print(f"[{timestamp}] Checking servers...")
+
+    for server in servers:
+        try:
+            response = requests.get(server, timeout=5)
+
+            if response.status_code == 200:
+                if server in down_servers:
+                    print(f"✅ {server} is back UP!")
+                    down_servers.discard(server)
+
+            else:
+                if server not in down_servers:
+                    print(f"❌ {server} returned {response.status_code}!")
+                    down_servers.add(server)
+
+        except requests.exceptions.ConnectionError:
+            if server not in down_servers:
+                print(f"❌ {server} is DOWN!")
+                down_servers.add(server)
+
+    time.sleep(30)  # Check every 30 seconds
+
+✅ Monitor Disk Space
+
+import subprocess
+import time
+import datetime
+
+threshold = 80      # Alert if above 80%
+
+print("Starting disk monitor...")
+print("Press Ctrl+C to stop\n")
+
+while True:
+    result = subprocess.run(
+        ['df', '-h', '/'],
+        capture_output=True,
+        text=True
+    )
+
+    lines   = result.stdout.strip().split('\n')
+    data    = lines[1].split()
+    usage   = int(data[4].replace('%', ''))
+    time_   = datetime.datetime.now().strftime('%H:%M:%S')
+
+    if usage >= 90:
+        print(f"[{time_}] 🔴 CRITICAL: Disk {usage}% full!")
+    elif usage >= threshold:
+        print(f"[{time_}] 🟡 WARNING: Disk {usage}% full!")
+    else:
+        print(f"[{time_}] 🟢 OK: Disk {usage}% used")
+
+    time.sleep(60)  # Check every minute
+
+✅ Wait for AWS Instance
+
+import boto3
+import time
+
+ec2         = boto3.client('ec2', region_name='us-east-1')
+instance_id = 'i-1234567890'
+max_wait    = 120
+waited      = 0
+
+print(f"Waiting for {instance_id} to start...")
+
+while waited < max_wait:
+    response = ec2.describe_instances(
+        InstanceIds=[instance_id]
+    )
+    state = response['Reservations'][0]['Instances'][0]\
+            ['State']['Name']
+
+    if state == 'running':
+        print(f"✅ Instance running! (waited {waited}s)")
+        break
+    elif state == 'terminated':
+        print("❌ Instance terminated!")
+        break
+    else:
+        print(f"State: {state}... ({waited}s)")
+        time.sleep(10)
+        waited += 10
+else:
+    print(f"❌ Instance not ready after {max_wait}s!")
+
+✅ Process Queue Until Empty
+
+import time
+
+# Deployment queue
+deploy_queue = [
+    {'app': 'frontend',  'version': 'v2.0'},
+    {'app': 'backend',   'version': 'v1.5'},
+    {'app': 'database',  'version': 'v1.2'},
+    {'app': 'cache',     'version': 'v3.0'}
+]
+
+print("Processing deployment queue...")
+
+while deploy_queue:     # Runs until queue is empty
+    # Get first item
+    task = deploy_queue.pop(0)
+
+    app     = task['app']
+    version = task['version']
+
+    print(f"Deploying {app}:{version}...")
+    time.sleep(2)   # Simulate deployment
+    print(f"✅ {app}:{version} deployed!")
+    print(f"Remaining: {len(deploy_queue)} tasks")
+
+print("All deployments done! ✅")
+--------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. Retry failed commands        → while attempt < max_retries
+2. Wait for server to start     → while waited < max_wait
+3. Wait for container/pod ready → while status != 'running'
+4. Continuous monitoring        → while True
+5. Process deployment queue     → while deploy_queue
+6. Wait for AWS instance        → while state != 'running'
+7. Monitor disk/cpu/memory      → while True + sleep
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
