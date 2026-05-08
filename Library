@@ -22,6 +22,18 @@ Bonus (Nice to Have)   -- Ignore now
 14. slack_sdk       → send Slack alerts
 15. prometheus_client→ expose metrics
 16. fabric          → remote server automation
+
+These are enough to:
+
+• Automate deployments
+• Build CI/CD utilities
+• Manage AWS resources
+• Work with Docker/Kubernetes
+• Parse logs/configs
+• Create internal DevOps tools
+• Build monitoring/maintenance scripts
+
+But for a complete DevOps profile, also learn these outside Python:
 -----------------------------------------------------------------------------------------------------
 Module
 → a single Python file
