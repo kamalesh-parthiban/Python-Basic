@@ -1,9 +1,478 @@
 -------------------------------------------------------------------------------------------------------------------------------------------
 Think of a for loop like a conveyor belt 🏭
 Each item on the belt gets processed one by one — until the belt is empty.
--------------------------------------------------------------------------------------------------------------------------------------------
 
-for item in collection:
-    # do something with each item
+For Loop = Do same task for every item!
+The most used concept in DevOps Python — every script loops through servers, containers, files or commands! 🚀
+-------------------------------------------------------------------------------------------------------------------------------------------
+Summary Table
+
+Feature           Code
+------------------------------------------------
+Basic loop        for item in collection
+
+With index        for i, item in enumerate(list)
+
+Number range      for i in range(5)
+
+Dictionary        for k, v in dict.items()
+
+Stop loop         break
+
+Skip item         continue
+
+Nested loop       loop inside loop
+
+One line          [x for x in list]
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+🤔 What is For Loop?
+
+Think of For Loop as an Assembly Line 🏭
+
+Assembly line does SAME task
+for EVERY item one by one
+
+For Loop does SAME task
+for EVERY item in collection
+
+# Without loop - repetitive!
+print("Deploying to web1...")
+print("Deploying to web2...")
+print("Deploying to web3...")
+print("Deploying to web4...")
+print("Deploying to web5...")
+
+# With loop - clean!
+servers = ['web1','web2','web3','web4','web5']
+for server in servers:
+    print(f"Deploying to {server}...")
+-------------------------------------------------------------------------------------------------------------------------------------------
+1. Basic For Loop
+
+# Loop through list
+servers = ['web1', 'web2', 'web3']
+
+for server in servers:
+    print(server)
+
+# Output:
+# web1
+# web2
+# web3
+-------------------------------------------------------------------------------------------------------------------------------------------
+2. Loop Through Different Collections
+
+# Loop through LIST
+servers = ['web1', 'web2', 'web3']
+for server in servers:
+    print(server)
+
+# Loop through TUPLE
+environments = ('production', 'staging', 'development')
+for env in environments:
+    print(env)
+
+# Loop through SET
+unique_ips = {'192.168.1.1', '192.168.1.2'}
+for ip in unique_ips:
+    print(ip)
+
+# Loop through DICTIONARY
+config = {'host': 'localhost', 'port': 8080, 'env': 'prod'}
+
+# Keys only
+for key in config:
+    print(key)
+
+# Values only
+for value in config.values():
+    print(value)
+
+# Keys and Values together
+for key, value in config.items():
+    print(f"{key} = {value}")
+
+# Loop through STRING
+for char in 'hello':
+    print(char)
+# h e l l o
+-------------------------------------------------------------------------------------------------------------------------------------------
+3. Range – Loop Numbers
+
+# range(stop)
+for i in range(5):
+    print(i)
+# 0 1 2 3 4
+
+# range(start, stop)
+for i in range(1, 6):
+    print(i)
+# 1 2 3 4 5
+
+# range(start, stop, step)
+for i in range(0, 10, 2):
+    print(i)
+# 0 2 4 6 8
+
+# Count down
+for i in range(5, 0, -1):
+    print(i)
+# 5 4 3 2 1
+-------------------------------------------------------------------------------------------------------------------------------------------
+4. Enumerate – Get Index & Value
+
+servers = ['web1', 'web2', 'web3']
+
+# Without enumerate
+for server in servers:
+    print(server)   # No index
+
+# With enumerate - get index too!
+for index, server in enumerate(servers):
+    print(f"{index}: {server}")
+# 0: web1
+# 1: web2
+# 2: web3
+
+# Start index from 1
+for index, server in enumerate(servers, start=1):
+    print(f"{index}: {server}")
+# 1: web1
+# 2: web2
+# 3: web3
+-------------------------------------------------------------------------------------------------------------------------------------------
+5. Break – Stop Loop Early
+
+servers = ['web1', 'web2', 'web3', 'web4', 'web5']
+
+# Stop when web3 is found
+for server in servers:
+    if server == 'web3':
+        print("Found web3! Stopping!")
+        break
+    print(f"Checking {server}...")
+
+# Output:
+# Checking web1...
+# Checking web2...
+# Found web3! Stopping!
+-------------------------------------------------------------------------------------------------------------------------------------------
+6. Continue – Skip Current Item
+
+servers = ['web1', 'web2', 'SKIP', 'web3', 'SKIP', 'web4']
+
+# Skip items marked as SKIP
+for server in servers:
+    if server == 'SKIP':
+        continue        # Skip this, go to next
+    print(f"Deploying to {server}...")
+
+# Output:
+# Deploying to web1...
+# Deploying to web2...
+# Deploying to web3...
+# Deploying to web4...
+-------------------------------------------------------------------------------------------------------------------------------------------
+7. Nested For Loop
+
+# Loop inside loop
+environments = ['production', 'staging']
+servers      = ['web1', 'web2', 'web3']
+
+for env in environments:
+    print(f"\nEnvironment: {env}")
+    for server in servers:
+        print(f"  Deploying to {server}...")
+
+# Output:
+# Environment: production
+#   Deploying to web1...
+#   Deploying to web2...
+#   Deploying to web3...
+# Environment: staging
+#   Deploying to web1...
+#   Deploying to web2...
+#   Deploying to web3...
+-------------------------------------------------------------------------------------------------------------------------------------------
+8. For with Else
+
+servers = ['web1', 'web2', 'web3']
+
+# Else runs when loop completes without break
+for server in servers:
+    if server == 'web99':
+        print("Found web99!")
+        break
+else:
+    print("web99 not found in any server!")
+
+# Output: web99 not found in any server!
+-------------------------------------------------------------------------------------------------------------------------------------------
+9. List Comprehension – Short For Loop
+
+servers = ['web1', 'web2', 'web3']
+
+# Normal loop to create new list
+upper_servers = []
+for server in servers:
+    upper_servers.append(server.upper())
+print(upper_servers)   # ['WEB1', 'WEB2', 'WEB3']
+
+# List comprehension - one line!
+upper_servers = [server.upper() for server in servers]
+print(upper_servers)   # ['WEB1', 'WEB2', 'WEB3']
+
+# With condition
+ports = [80, 443, 8080, 22, 3306, 9090]
+high_ports = [p for p in ports if p > 1000]
+print(high_ports)      # [8080, 3306, 9090]
+-------------------------------------------------------------------------------------------------------------------------------------------
+10. Real DevOps Use Cases
+✅ Deploy to Multiple Servers
+
+import paramiko
+
+servers = [
+    '192.168.1.1',
+    '192.168.1.2',
+    '192.168.1.3',
+    '192.168.1.4'
+]
+
+for server in servers:
+    print(f"\nDeploying to {server}...")
+
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(
+            paramiko.AutoAddPolicy()
+        )
+        ssh.connect(server, username='ubuntu',
+                    password='password')
+
+        # Run deploy commands
+        commands = [
+            'git pull origin main',
+            'pip install -r requirements.txt',
+            'sudo systemctl restart myapp'
+        ]
+
+        for cmd in commands:
+            print(f"  Running: {cmd}")
+            stdin, stdout, stderr = ssh.exec_command(cmd)
+            stdout.channel.recv_exit_status()
+
+        ssh.close()
+        print(f"  ✅ {server} deployed!")
+
+    except Exception as e:
+        print(f"  ❌ {server} failed: {e}")
+
+✅ Check All Docker Containers
+
+import docker
+
+client = docker.from_env()
+
+containers = client.containers.list(all=True)
+
+print("Container Status Report:")
+print("-" * 40)
+
+for container in containers:
+    name   = container.name
+    status = container.status
+
+    if status == 'running':
+        print(f"✅ {name:20} RUNNING")
+    elif status == 'exited':
+        print(f"❌ {name:20} STOPPED")
+        # Restart stopped container
+        container.restart()
+        print(f"🔄 {name:20} RESTARTED")
+    else:
+        print(f"⚠️  {name:20} {status.upper()}")
+
+✅ Check All Kubernetes Pods
+
+from kubernetes import client, config
+
+config.load_kube_config()
+v1 = client.CoreV1Api()
+
+pods = v1.list_pod_for_all_namespaces()
+
+failed_pods  = []
+running_pods = []
+pending_pods = []
+
+for pod in pods.items:
+    name   = pod.metadata.name
+    status = pod.status.phase
+    ns     = pod.metadata.namespace
+
+    if status == 'Running':
+        running_pods.append(name)
+    elif status == 'Failed':
+        failed_pods.append(name)
+    elif status == 'Pending':
+        pending_pods.append(name)
+
+print(f"Running: {len(running_pods)}")
+print(f"Failed:  {len(failed_pods)}")
+print(f"Pending: {len(pending_pods)}")
+
+# Handle failed pods
+for pod in failed_pods:
+    print(f"Restarting failed pod: {pod}")
+    v1.delete_namespaced_pod(name=pod, namespace='default')
+
+✅ Backup Files to S3
+
+import boto3
+import os
+
+s3 = boto3.client('s3')
+
+log_files = [
+    '/var/log/app.log',
+    '/var/log/nginx.log',
+    '/var/log/error.log',
+    '/var/log/access.log'
+]
+
+for file_path in log_files:
+    # Check if file exists
+    if not os.path.exists(file_path):
+        print(f"Skipping {file_path} - not found")
+        continue
+
+    # Get filename only
+    filename = os.path.basename(file_path)
+
+    # Upload to S3
+    print(f"Uploading {filename}...")
+    s3.upload_file(
+        file_path,
+        'my-backup-bucket',
+        f'logs/{filename}'
+    )
+    print(f"✅ {filename} uploaded!")
+
+print("All files backed up!")
+
+✅ Monitor Multiple AWS EC2 Instances
+
+import boto3
+
+ec2 = boto3.client('ec2', region_name='us-east-1')
+
+response = ec2.describe_instances()
+
+stopped_instances  = []
+running_instances  = []
+
+for reservation in response['Reservations']:
+    for instance in reservation['Instances']:
+        id_    = instance['InstanceId']
+        state  = instance['State']['Name']
+        type_  = instance['InstanceType']
+
+        if state == 'running':
+            running_instances.append(id_)
+            print(f"✅ {id_} ({type_}) RUNNING")
+
+        elif state == 'stopped':
+            stopped_instances.append(id_)
+            print(f"❌ {id_} ({type_}) STOPPED")
+
+print(f"\nTotal Running: {len(running_instances)}")
+print(f"Total Stopped: {len(stopped_instances)}")
+
+# Start all stopped instances
+for instance_id in stopped_instances:
+    print(f"Starting {instance_id}...")
+    ec2.start_instances(InstanceIds=[instance_id])
+
+✅ Process Log Files
+
+import os
+
+log_dir   = '/var/log'
+error_count = 0
+errors    = []
+
+# Walk through all log files
+for root, dirs, files in os.walk(log_dir):
+    for filename in files:
+        if filename.endswith('.log'):
+            filepath = os.path.join(root, filename)
+
+            # Read each log file
+            with open(filepath, 'r') as f:
+                for line_num, line in enumerate(f, 1):
+                    if 'ERROR' in line:
+                        error_count += 1
+                        errors.append({
+                            'file':    filename,
+                            'line':    line_num,
+                            'message': line.strip()
+                        })
+
+print(f"Total errors found: {error_count}")
+
+for error in errors[:10]:   # Show first 10
+    print(f"File: {error['file']}")
+    print(f"Line: {error['line']}")
+    print(f"Msg:  {error['message']}")
+    print("---")
+
+✅ Retry Failed Deployments
+
+import time
+
+servers = ['web1', 'web2', 'web3']
+failed  = []
+
+# First deployment attempt
+for server in servers:
+    try:
+        print(f"Deploying to {server}...")
+        # deploy logic here
+        print(f"✅ {server} done!")
+    except Exception as e:
+        print(f"❌ {server} failed: {e}")
+        failed.append(server)
+
+# Retry failed servers
+if failed:
+    print(f"\nRetrying {len(failed)} failed servers...")
+    time.sleep(5)
+
+    for server in failed:
+        for attempt in range(1, 4):   # Try 3 times
+            try:
+                print(f"Attempt {attempt} for {server}")
+                # deploy logic here
+                print(f"✅ {server} done!")
+                break
+            except Exception as e:
+                if attempt == 3:
+                    print(f"❌ {server} failed after 3 attempts!")
+                else:
+                    print(f"Retrying in 5 seconds...")
+                    time.sleep(5)
+-------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. Deploy to multiple servers     → for server in servers
+2. Check all containers/pods      → for container in containers
+3. Process all log files          → for file in log_files
+4. Backup multiple files to S3    → for file in files
+5. Run multiple commands          → for cmd in commands
+6. Check all EC2 instances        → for instance in instances
+7. Retry failed deployments       → for attempt in range(3)
+8. Walk through directories       → os.walk()
 
 
