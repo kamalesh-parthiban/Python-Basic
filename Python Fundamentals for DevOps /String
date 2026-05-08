@@ -1,0 +1,375 @@
+------------------------------------------------------------------------------------------------------------------------------------------------
+String = Text handling in Python!
+Used in EVERY DevOps task — parsing logs, building commands, generating configs & processing output! 🚀
+------------------------------------------------------------------------------------------------------------------------------------------------
+🤔 What is String?
+Think of String as Text 📝
+
+Any text inside quotes = String
+
+'hello'          → String
+"hello"          → String
+"192.168.1.1"   → String
+"production"     → String
+"nginx"          → String
+
+# Single quotes
+name = 'myapp'
+
+# Double quotes
+name = "myapp"
+
+# Both are same!
+------------------------------------------------------------------------------------------------------------------------------------------------
+1. Create String
+
+# Single line
+name    = 'myapp'
+ip      = '192.168.1.1'
+env     = "production"
+
+# Multi line string
+message = """
+Deployment started!
+Environment: production
+Version: v2.0
+"""
+
+# Multi line with single quotes
+message = '''
+Server: web1
+Status: running
+Port: 8080
+'''
+------------------------------------------------------------------------------------------------------------------------------------------------
+2. Access Characters
+
+name = 'myapp'
+
+# Access by index (starts from 0)
+print(name[0])    # m
+print(name[1])    # y
+print(name[2])    # a
+print(name[3])    # p
+print(name[4])    # p
+print(name[-1])   # p (last)
+print(name[-2])   # p (second last)
+
+# Length of string
+print(len(name))  # 5
+------------------------------------------------------------------------------------------------------------------------------------------------
+3. String Slicing
+
+text = 'production-server-v2'
+
+# Get portion of string
+print(text[0:10])    # production
+print(text[11:17])   # server
+print(text[18:])     # v2
+print(text[:10])     # production
+print(text[-2:])     # v2
+
+# Every 2nd character
+print(text[::2])     # pouto-evr2
+------------------------------------------------------------------------------------------------------------------------------------------------
+4. String Methods
+
+text = '  Hello Production Server  '
+
+# Case
+print(text.upper())         # HELLO PRODUCTION SERVER
+print(text.lower())         # hello production server
+print(text.title())         # Hello Production Server
+
+# Remove spaces
+print(text.strip())         # 'Hello Production Server'
+print(text.lstrip())        # Remove left spaces
+print(text.rstrip())        # Remove right spaces
+
+# Replace
+print(text.replace('Production', 'Staging'))
+# Hello Staging Server
+
+# Split string into list
+servers = 'web1,web2,web3'
+print(servers.split(','))   # ['web1', 'web2', 'web3']
+
+# Join list into string
+servers = ['web1', 'web2', 'web3']
+print(','.join(servers))    # web1,web2,web3
+
+# Find
+text = 'production-server'
+print(text.find('server'))  # 11 (position)
+print(text.find('xyz'))     # -1 (not found)
+
+# Count
+text = 'web1 web2 web1 web1'
+print(text.count('web1'))   # 3
+
+# Check start & end
+url = 'https://myapp.com'
+print(url.startswith('https'))  # True
+print(url.endswith('.com'))     # True
+------------------------------------------------------------------------------------------------------------------------------------------------
+5. Check String Content
+
+# Check what string contains
+print('hello'.isalpha())    # True  - only letters
+print('12345'.isdigit())    # True  - only numbers
+print('hello1'.isalnum())   # True  - letters & numbers
+print('  '.isspace())       # True  - only spaces
+print('HELLO'.isupper())    # True  - all uppercase
+print('hello'.islower())    # True  - all lowercase
+
+# Real DevOps use
+port = '8080'
+if port.isdigit():
+    port = int(port)
+    print(f"Valid port: {port}")
+else:
+    print("Invalid port!")
+------------------------------------------------------------------------------------------------------------------------------------------------
+6. String Formatting
+
+name = 'myapp'
+env  = 'production'
+port = 8080
+
+# f-string (Best way - Modern)
+print(f"Deploying {name} to {env} on port {port}")
+# Deploying myapp to production on port 8080
+
+# format() method
+print("Deploying {} to {} on port {}".format(name, env, port))
+
+# % formatting (Old way)
+print("Deploying %s to %s on port %d" % (name, env, port))
+
+# f-string with expressions
+replicas = 3
+print(f"Total servers: {replicas * 2}")   # Total servers: 6
+print(f"Env upper: {env.upper()}")        # Env upper: PRODUCTION
+------------------------------------------------------------------------------------------------------------------------------------------------
+7. String Concatenation
+
+# Join strings together
+first = 'Hello'
+second = 'World'
+
+# Using + operator
+result = first + ' ' + second
+print(result)   # Hello World
+
+# Using f-string (better)
+result = f"{first} {second}"
+print(result)   # Hello World
+
+# Join many strings
+server  = 'web1'
+domain  = '.example.com'
+url     = 'https://' + server + domain
+print(url)  # https://web1.example.com
+
+# Better with f-string
+url = f"https://{server}{domain}"
+print(url)  # https://web1.example.com
+------------------------------------------------------------------------------------------------------------------------------------------------
+8. String Contains Check
+
+# Check if string contains something
+log = 'ERROR: Database connection failed!'
+
+if 'ERROR' in log:
+    print("Error found in log!")
+
+if 'WARNING' not in log:
+    print("No warning found!")
+
+# Case insensitive check
+log = 'error: something failed'
+if 'error' in log.lower():
+    print("Error found!")
+------------------------------------------------------------------------------------------------------------------------------------------------
+9. Multiline & Special Characters
+
+# New line
+print("Line 1\nLine 2\nLine 3")
+# Line 1
+# Line 2
+# Line 3
+
+# Tab
+print("Name:\tMyApp")
+# Name:   MyApp
+
+# Backslash
+print("Path: C:\\Users\\ubuntu")
+# Path: C:\Users\ubuntu
+
+# Raw string (ignores special chars)
+path = r'C:\Users\ubuntu\documents'
+print(path)
+# C:\Users\ubuntu\documents
+------------------------------------------------------------------------------------------------------------------------------------------------
+10. Real DevOps Use Cases
+✅ Parse Log Files
+
+# Read and parse log file
+with open('/var/log/app.log', 'r') as f:
+    for line in f:
+        line = line.strip()   # Remove spaces
+
+        # Check log level
+        if 'ERROR' in line:
+            print(f"Error found: {line}")
+
+        elif 'WARNING' in line:
+            print(f"Warning: {line}")
+
+        # Extract IP from log
+        if line.startswith('192.168'):
+            ip = line.split(' ')[0]
+            print(f"Request from: {ip}")
+
+✅ Build Dynamic Commands
+
+import subprocess
+
+env      = 'production'
+image    = 'myapp'
+version  = 'v2.0'
+port     = 8080
+
+# Build docker command using f-string
+command = f"docker run -d -p {port}:80 {image}:{version}"
+print(command)
+# docker run -d -p 8080:80 myapp:v2.0
+
+# Run it
+subprocess.run(command, shell=True)
+
+# Build kubectl command
+namespace = 'default'
+command = f"kubectl get pods -n {namespace}"
+subprocess.run(command, shell=True)
+
+✅ Build API URLs
+
+import requests
+
+base_url  = 'https://api.github.com'
+username  = 'torvalds'
+repo      = 'linux'
+
+# Build URLs with f-string
+user_url  = f"{base_url}/users/{username}"
+repo_url  = f"{base_url}/repos/{username}/{repo}"
+issue_url = f"{base_url}/repos/{username}/{repo}/issues"
+
+# Use URLs
+response = requests.get(user_url)
+print(response.json()['name'])
+
+response = requests.get(repo_url)
+print(response.json()['description'])
+
+✅ Parse Server Response
+
+import subprocess
+
+# Get disk usage
+result = subprocess.run(
+    ['df', '-h', '/'],
+    capture_output=True,
+    text=True
+)
+
+output = result.stdout
+
+# Split into lines
+lines = output.strip().split('\n')
+
+# Get second line (data line)
+data_line = lines[1]
+
+# Split by spaces
+parts = data_line.split()
+
+total   = parts[1]   # Total space
+used    = parts[2]   # Used space
+free    = parts[3]   # Free space
+percent = parts[4]   # Usage percent
+
+print(f"Total:   {total}")
+print(f"Used:    {used}")
+print(f"Free:    {free}")
+print(f"Usage:   {percent}")
+
+✅ Generate Config Files
+
+# Generate nginx config using strings
+server_name = 'myapp.example.com'
+port        = 8080
+app_port    = 3000
+
+nginx_config = f"""
+server {{
+    listen {port};
+    server_name {server_name};
+
+    location / {{
+        proxy_pass http://localhost:{app_port};
+        proxy_set_header Host $host;
+    }}
+}}
+"""
+
+# Save config file
+with open('/etc/nginx/sites-available/myapp', 'w') as f:
+    f.write(nginx_config)
+
+print("Nginx config created! ✅")
+
+✅ Process Environment Variables
+
+import os
+
+# Get env var as string
+db_url = os.environ.get('DATABASE_URL', '')
+
+# Parse db url
+# postgresql://user:password@localhost:5432/mydb
+
+if db_url.startswith('postgresql://'):
+    # Remove prefix
+    url = db_url.replace('postgresql://', '')
+
+    # Split user info and host info
+    user_info, host_info = url.split('@')
+
+    # Get username and password
+    username, password = user_info.split(':')
+
+    # Get host and db
+    host_port, db_name = host_info.split('/')
+
+    # Get host and port
+    host, port = host_port.split(':')
+
+    print(f"Username: {username}")
+    print(f"Host:     {host}")
+    print(f"Port:     {port}")
+    print(f"Database: {db_name}")
+------------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. f-string         →  Build dynamic commands & URLs
+2. split()          →  Parse command output & logs
+3. strip()          →  Clean log lines
+4. in               →  Check errors in logs
+5. replace()        →  Update config values
+6. startswith()     →  Check URL & file paths
+7. join()           →  Build commands from lists
+8. upper()/lower()  →  Compare env names
+
