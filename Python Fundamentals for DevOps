@@ -1,0 +1,19 @@
+Python Fundamentals for DevOps
+
+1. Variables            → store values
+2. String               → text data
+3. List                 → [ ] ordered changeable collection
+4. Tuple                → ( ) ordered fixed collection
+5. Dictionary           → { } key-value pairs
+6. Set                  → unique values only
+
+7. If/else              → conditions
+8. For loop             → repeat tasks
+9. While loop           → repeated execution
+
+10. Functions           → reusable code blocks
+11. Classes             → object-oriented programming
+
+12. File handling       → read/write files
+13. Exception handling  → handle errors
+14. Try/except          → prevent script failures
