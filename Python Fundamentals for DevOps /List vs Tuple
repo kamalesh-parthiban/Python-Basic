@@ -1,1 +1,298 @@
+------------------------------------------------------------------------------------------------
+List = Shopping cart (add/remove anytime)
+Tuple = Sealed box (fixed forever)
+Both are used heavily in every DevOps script! 🚀
+------------------------------------------------------------------------------------------------
+🔄 List vs Tuple – Full Comparison
 
+Feature        List                 Tuple
+--------------------------------------------------------
+Syntax         [ ]                  ( )
+
+Changeable     ✅ Yes               ❌ No
+
+Add items      ✅ Yes               ❌ No
+
+Remove items   ✅ Yes               ❌ No
+
+Change items   ✅ Yes               ❌ No
+
+Faster         ❌ Slower            ✅ Faster
+
+Use for        Dynamic data         Fixed data
+
+Example        List of servers      DB config
+
+------------------------------------------------------------------------------------------
+List and Tuple are built-in Python data types, not modules.
+
+Category                Example
+---------------------------------------------
+Data Types              list, tuple, dict, set
+Modules/Libraries       os, sys, requests, boto3
+
+------------------------------------------------------------------------------------------------
+📋 LIST – Changeable Collection
+Think of List as a Shopping Cart 🛒
+
+You can ADD items to cart
+You can REMOVE items from cart
+You can CHANGE items in cart
+
+# List uses [ ] square brackets
+servers = ['web1', 'web2', 'web3']
+List Operations
+
+servers = ['web1', 'web2', 'web3']
+------------------------------------------------------------------------------------------------
+# 1. Access items (starts from 0)
+print(servers[0])    # web1 (first)
+print(servers[1])    # web2 (second)
+print(servers[2])    # web3 (third)
+print(servers[-1])   # web3 (last)
+
+# 2. Add items
+servers.append('web4')          # Add at end
+servers.insert(0, 'web0')       # Add at position
+print(servers)
+# ['web0', 'web1', 'web2', 'web3', 'web4']
+
+# 3. Remove items
+servers.remove('web1')          # Remove by value
+servers.pop()                   # Remove last item
+servers.pop(0)                  # Remove by position
+print(servers)
+
+# 4. Change items
+servers[0] = 'newserver'        # Change first item
+print(servers)
+
+# 5. Length
+print(len(servers))             # How many items
+
+# 6. Check if exists
+if 'web2' in servers:
+    print("web2 exists!")
+
+# 7. Loop through
+for server in servers:
+    print(f"Server: {server}")
+
+# 8. Sort
+servers.sort()                  # Alphabetical
+servers.sort(reverse=True)      # Reverse order
+
+# 9. Clear
+servers.clear()                 # Empty the list
+------------------------------------------------------------------------------------------------
+
+List with Different Data Types
+
+# List can hold any data type
+
+# Strings
+environments = ['production', 'staging', 'development']
+
+# Numbers
+ports = [80, 443, 8080, 9090]
+
+# Mixed
+mixed = ['myapp', 8080, True, 3.14]
+
+# List of lists (nested)
+servers = [
+    ['web1', '192.168.1.1', 80],
+    ['web2', '192.168.1.2', 80],
+    ['web3', '192.168.1.3', 80]
+]
+
+# Access nested
+print(servers[0][0])    # web1
+print(servers[0][1])    # 192.168.1.1
+print(servers[1][0])    # web2
+------------------------------------------------------------------------------------------------
+List Slicing
+
+servers = ['web1', 'web2', 'web3', 'web4', 'web5']
+
+# Get portion of list
+print(servers[0:3])     # ['web1', 'web2', 'web3']
+print(servers[1:4])     # ['web2', 'web3', 'web4']
+print(servers[:3])      # ['web1', 'web2', 'web3'] first 3
+print(servers[2:])      # ['web3', 'web4', 'web5'] from 3rd
+print(servers[-2:])     # ['web4', 'web5'] last 2
+------------------------------------------------------------------------------------------------
+Real DevOps Use of List
+
+import subprocess
+import paramiko
+
+# 1. List of servers to deploy to
+servers = ['192.168.1.1', '192.168.1.2', '192.168.1.3']
+
+for server in servers:
+    print(f"Deploying to {server}...")
+    ssh = paramiko.SSHClient()
+    ssh.connect(server, username='ubuntu', password='pass')
+    ssh.exec_command('sudo systemctl restart myapp')
+    ssh.close()
+
+# 2. List of commands to run
+commands = [
+    'sudo apt update',
+    'sudo apt install -y nginx',
+    'sudo systemctl start nginx'
+]
+
+for cmd in commands:
+    subprocess.run(cmd, shell=True)
+
+# 3. List of files to backup
+log_files = [
+    '/var/log/app.log',
+    '/var/log/nginx.log',
+    '/var/log/error.log'
+]
+
+for file in log_files:
+    subprocess.run(['cp', file, '/backup/'])
+
+# 4. List of ports to check
+ports = [80, 443, 8080, 5432]
+for port in ports:
+    print(f"Checking port {port}...")
+------------------------------------------------------------------------------------------------
+📌 TUPLE – Fixed Collection
+Think of Tuple as a Sealed Box 📦
+
+Once sealed you CANNOT add
+Once sealed you CANNOT remove
+Once sealed you CANNOT change
+It is FIXED forever!
+
+# Tuple uses ( ) round brackets
+environments = ('production', 'staging', 'development')
+---------------------------------------------------------------------------------------------------
+Tuple Operations
+
+environments = ('production', 'staging', 'development')
+
+# 1. Access items (same as list)
+print(environments[0])    # production
+print(environments[1])    # staging
+print(environments[-1])   # development (last)
+
+# 2. Length
+print(len(environments))  # 3
+
+# 3. Check if exists
+if 'production' in environments:
+    print("production exists!")
+
+# 4. Loop through
+for env in environments:
+    print(f"Environment: {env}")
+
+# 5. Count occurrences
+numbers = (1, 2, 3, 2, 4, 2)
+print(numbers.count(2))   # 3
+
+# 6. Find position
+print(environments.index('staging'))  # 1
+
+# 7. CANNOT change - these all give ERROR!
+environments.append('testing')   # ERROR!
+environments.remove('staging')   # ERROR!
+environments[0] = 'prod'         # ERROR!
+---------------------------------------------------------------------------------------------------
+Tuple with Different Data Types
+
+# Server config as tuple (fixed - never changes)
+server_config = ('192.168.1.1', 8080, 'ubuntu')
+
+# Access
+ip      = server_config[0]   # 192.168.1.1
+port    = server_config[1]   # 8080
+user    = server_config[2]   # ubuntu
+
+# Unpack tuple (very useful!)
+ip, port, user = server_config
+print(ip)    # 192.168.1.1
+print(port)  # 8080
+print(user)  # ubuntu
+
+# Nested tuple
+servers = (
+    ('web1', '192.168.1.1', 80),
+    ('web2', '192.168.1.2', 80),
+    ('web3', '192.168.1.3', 80)
+)
+print(servers[0][0])    # web1
+print(servers[0][1])    # 192.168.1.1
+----------------------------------------------------------------------------------------------------
+Real DevOps Use of Tuple
+
+# 1. Fixed server configs (never changes)
+DB_CONFIG = ('localhost', 5432, 'mydb', 'admin')
+db_host, db_port, db_name, db_user = DB_CONFIG
+
+# 2. Fixed environments (never add new ones)
+VALID_ENVIRONMENTS = ('production', 'staging', 'development')
+
+import sys
+env = sys.argv[1]
+
+if env not in VALID_ENVIRONMENTS:
+    print(f"Invalid env! Choose from {VALID_ENVIRONMENTS}")
+    sys.exit(1)
+
+# 3. Fixed port mappings
+PORT_MAPPINGS = (
+    ('http',  80),
+    ('https', 443),
+    ('ssh',   22),
+    ('mysql', 3306)
+)
+
+for service, port in PORT_MAPPINGS:
+    print(f"{service} runs on port {port}")
+
+# 4. Return multiple values from function
+def get_server_info():
+    return ('192.168.1.1', 8080, 'ubuntu')  # Returns tuple
+
+ip, port, user = get_server_info()
+print(ip, port, user)
+------------------------------------------------------------------------------------------------
+
+💡 Where You Already Used Them!
+
+# subprocess - list is used here!
+subprocess.run(['git', 'pull', 'origin', 'main'])
+#              ↑ This is a LIST!
+
+# kubernetes - list comes back from API!
+pods = v1.list_namespaced_pod(namespace='default')
+for pod in pods.items:   # pods.items is a LIST!
+    print(pod.metadata.name)
+
+# docker - list comes back!
+containers = client.containers.list()  # Returns LIST!
+for c in containers:
+    print(c.name)
+
+# boto3 - list used everywhere!
+response = s3.list_buckets()
+for bucket in response['Buckets']:  # Buckets is a LIST!
+    print(bucket['Name'])
+
+# paramiko - list of commands!
+commands = [                         # This is a LIST!
+    'sudo apt update',
+    'sudo apt install nginx',
+    'sudo systemctl start nginx'
+]
+for cmd in commands:
+    ssh.exec_command(cmd)
+
+----------------------------------------------------------------------------
