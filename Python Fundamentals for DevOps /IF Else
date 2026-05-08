@@ -57,7 +57,7 @@ if cpu_usage > 80:
 
 # Only runs if condition is TRUE
 # If FALSE - nothing happens
-
+-----------------------------------------------------------------------------------------------------------------------
 2. If/Else
 
 cpu_usage = 85
@@ -66,7 +66,7 @@ if cpu_usage > 80:
     print("CPU usage HIGH!")    # Runs if TRUE
 else:
     print("CPU usage normal!")  # Runs if FALSE
-
+-----------------------------------------------------------------------------------------------------------------------
 3. If/Elif/Else
 
 cpu_usage = 85
@@ -81,7 +81,7 @@ else:
     print("OK       - CPU normal!")
 
 # Output: WARNING - CPU high!
-
+-----------------------------------------------------------------------------------------------------------------------
 4. Comparison Operators
 
 x = 10
@@ -93,7 +93,7 @@ print(x > y)     # False  - greater than
 print(x < y)     # True   - less than
 print(x >= y)    # False  - greater or equal
 print(x <= y)    # True   - less or equal
-
+-----------------------------------------------------------------------------------------------------------------------
 5. Logical Operators
 
 cpu    = 85
@@ -111,7 +111,7 @@ if cpu > 80 or memory > 80:
 debug = False
 if not debug:
     print("Debug mode is OFF!")
-
+-----------------------------------------------------------------------------------------------------------------------
 6. Check String
 
 env = 'production'
@@ -133,7 +133,7 @@ if log.startswith('ERROR'):
 name = ''
 if not name:
     print("Name is empty!")
-
+-----------------------------------------------------------------------------------------------------------------------
 7. Check List & Dictionary
 
 # Check if list is empty
@@ -157,7 +157,7 @@ if 'port' in config:
 # Check if dictionary is empty
 if not config:
     print("Config is empty!")
-
+-----------------------------------------------------------------------------------------------------------------------
 8. Check None
 
 # None = nothing / no value
@@ -176,7 +176,7 @@ db_password = os.environ.get('DB_PASSWORD')
 if db_password is None:
     print("ERROR: DB_PASSWORD not set!")
     sys.exit(1)
-
+-----------------------------------------------------------------------------------------------------------------------
 9. Nested If
 
 env     = 'production'
@@ -197,7 +197,7 @@ if env == 'production':
 
 else:
     print(f"Deploying to {env}...")
-
+-----------------------------------------------------------------------------------------------------------------------
 10. One Line If (Ternary)
 
 cpu = 85
@@ -216,7 +216,7 @@ print(status)   # HIGH
 replicas = 5 if env == 'production' else 2
 debug    = True if env == 'development' else False
 port     = 80 if env == 'production' else 8080
-
+-----------------------------------------------------------------------------------------------------------------------
 11. Real DevOps Use Cases
 ✅ Check Environment Before Deploy
 
@@ -396,7 +396,7 @@ for pod in pods.items:
 
     else:
         print(f"{name} unknown status: {status}")
-
+-----------------------------------------------------------------------------------------------------------------------
 💡 Most Used in DevOps
 
 1. Check environment          →  if env == 'production'
