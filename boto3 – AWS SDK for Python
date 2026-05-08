@@ -3,7 +3,11 @@ boto3 = Control ALL AWS Services from Python! // boto3 = Full control of ALL AWS
 This is the backbone of AWS DevOps automation! 🚀
 -------------------------------------------------------------------------------------------------------------------------------------------------
 boto3 was built by Amazon specifically for AWS. It cannot connect to Google Cloud, Azure, or any other service!
-------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------
+boto3 is a Python library for AWS.
+
+pip install boto3
+----------------------------------------------------------------------------------------------------------------------
 ☁ Other Clouds Have Their Own Libraries
 
 Cloud Provider      Library         Install
