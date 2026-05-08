@@ -2,6 +2,63 @@
 String = Text handling in Python!
 Used in EVERY DevOps task — parsing logs, building commands, generating configs & processing output! 🚀
 ------------------------------------------------------------------------------------------------------------------------------------------------
+📊 Most Used String Methods in DevOps
+
+Method                    Use
+-------------------------------------------------------------
+strip()                   Remove spaces from logs
+
+split()                   Parse command output
+
+join()                    Build commands from list
+
+replace()                 Update config values
+
+upper() / lower()         Case comparison
+
+startswith()              Check URL/path prefix
+
+endswith()                Check file extension
+
+find()                    Search in logs
+
+in                        Check if error in log
+
+f-string                  Build dynamic commands
+-------------------------------------------------------------
+📊 Summary Table
+
+Task                Code
+---------------------------------------------------------
+Create              s = 'hello'
+
+Access char         s[0]
+
+Length              len(s)
+
+Slice               s[0:5]
+
+Upper/Lower         s.upper() / s.lower()
+
+Strip spaces        s.strip()
+
+Split               s.split(',')
+
+Join                ''.join(list)
+
+Replace             s.replace('old','new')
+
+Check contains      'word' in s
+
+Format              f"Hello {name}"
+
+Find                s.find('word')
+
+Count               s.count('word')
+
+Starts with         s.startswith('http')
+---------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------
 🤔 What is String?
 Think of String as Text 📝
 
