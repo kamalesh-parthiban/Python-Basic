@@ -1,0 +1,632 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Class = Blueprint for organized code!
+Group related data & functions together! Makes DevOps scripts cleaner, reusable & easier to maintain! 🚀
+-------------------------------------------------------------------------------------------------------------------------------------------------
+📊 Summary Table
+
+Feature           Code
+----------------------------------------------------------------
+Create class      class MyClass:
+
+Constructor       def __init__(self):
+
+Instance var      self.name = value
+
+Method            def method(self):
+
+Create object     obj = MyClass()
+
+Access property   obj.name
+
+Call method       obj.method()
+
+Inheritance       class Child(Parent):
+
+Call parent       super().__init__()
+
+String repr       def __str__(self):
+-------------------------------------------------------------------------------------------------------------------------------------------------
+🤔 What is a Class?
+Think of Class as a Blueprint 🏗️
+
+Blueprint of a House:
+→ Every house has rooms, doors, windows
+→ But each house has different colors, sizes
+
+Class is a Blueprint:
+→ Every object has same structure
+→ But each object has different values
+
+# Function = single task
+# Class    = collection of related functions & data
+
+# Without class - messy!
+server1_name    = 'web1'
+server1_ip      = '192.168.1.1'
+server1_status  = 'running'
+
+server2_name    = 'web2'
+server2_ip      = '192.168.1.2'
+server2_status  = 'stopped'
+
+# With class - organized!
+class Server:
+    def __init__(self, name, ip):
+        self.name   = name
+        self.ip     = ip
+        self.status = 'stopped'
+
+server1 = Server('web1', '192.168.1.1')
+server2 = Server('web2', '192.168.1.2')
+-------------------------------------------------------------------------------------------------------------------------------------------------
+1. Create Basic Class
+
+# Define class
+class Server:
+    pass    # Empty class
+
+# Create object from class
+server = Server()
+print(server)
+-------------------------------------------------------------------------------------------------------------------------------------------------
+2. Class with __init__
+
+class Server:
+    # __init__ runs when object is created
+    def __init__(self, name, ip, port):
+        self.name   = name      # Store name
+        self.ip     = ip        # Store ip
+        self.port   = port      # Store port
+        self.status = 'stopped' # Default status
+
+# Create objects
+server1 = Server('web1', '192.168.1.1', 8080)
+server2 = Server('web2', '192.168.1.2', 9090)
+
+# Access properties
+print(server1.name)     # web1
+print(server1.ip)       # 192.168.1.1
+print(server2.name)     # web2
+print(server2.port)     # 9090
+-------------------------------------------------------------------------------------------------------------------------------------------------
+3. Class with Methods
+
+class Server:
+    def __init__(self, name, ip, port):
+        self.name   = name
+        self.ip     = ip
+        self.port   = port
+        self.status = 'stopped'
+
+    # Method = function inside class
+    def start(self):
+        self.status = 'running'
+        print(f"{self.name} started! ✅")
+
+    def stop(self):
+        self.status = 'stopped'
+        print(f"{self.name} stopped!")
+
+    def restart(self):
+        self.stop()
+        self.start()
+        print(f"{self.name} restarted!")
+
+    def get_status(self):
+        return self.status
+
+    def info(self):
+        print(f"Name:   {self.name}")
+        print(f"IP:     {self.ip}")
+        print(f"Port:   {self.port}")
+        print(f"Status: {self.status}")
+
+# Create and use object
+server = Server('web1', '192.168.1.1', 8080)
+server.info()
+server.start()
+server.info()
+server.stop()
+print(server.get_status())  # stopped
+-------------------------------------------------------------------------------------------------------------------------------------------------
+4. Multiple Objects from Same Class
+
+class Server:
+    def __init__(self, name, ip, port=80):
+        self.name   = name
+        self.ip     = ip
+        self.port   = port
+        self.status = 'stopped'
+
+    def start(self):
+        self.status = 'running'
+        print(f"✅ {self.name} started!")
+
+    def stop(self):
+        self.status = 'stopped'
+        print(f"❌ {self.name} stopped!")
+
+# Create multiple servers from same class
+web1 = Server('web1', '192.168.1.1', 80)
+web2 = Server('web2', '192.168.1.2', 80)
+web3 = Server('web3', '192.168.1.3', 8080)
+
+# Each has same structure but different values
+web1.start()
+web2.start()
+web3.stop()
+
+# Store in list
+servers = [web1, web2, web3]
+
+for server in servers:
+    print(f"{server.name}: {server.status}")
+-------------------------------------------------------------------------------------------------------------------------------------------------
+5. Class Variables vs Instance Variables
+
+class Server:
+    # Class variable - SAME for all objects
+    company     = 'MyCompany'
+    total       = 0
+
+    def __init__(self, name, ip):
+        # Instance variable - DIFFERENT for each object
+        self.name   = name
+        self.ip     = ip
+        Server.total += 1   # Increment class variable
+
+web1 = Server('web1', '192.168.1.1')
+web2 = Server('web2', '192.168.1.2')
+web3 = Server('web3', '192.168.1.3')
+
+# Class variable - same for all
+print(web1.company)     # MyCompany
+print(web2.company)     # MyCompany
+
+# Instance variable - different for each
+print(web1.name)        # web1
+print(web2.name)        # web2
+
+# Class variable - shared count
+print(Server.total)     # 3
+-------------------------------------------------------------------------------------------------------------------------------------------------
+6. Inheritance – Extend a Class
+
+# Base class
+class Server:
+    def __init__(self, name, ip):
+        self.name   = name
+        self.ip     = ip
+        self.status = 'stopped'
+
+    def start(self):
+        self.status = 'running'
+        print(f"✅ {self.name} started!")
+
+    def stop(self):
+        self.status = 'stopped'
+        print(f"❌ {self.name} stopped!")
+
+    def info(self):
+        print(f"Name: {self.name}, IP: {self.ip}")
+
+# Child class - inherits from Server
+class WebServer(Server):
+    def __init__(self, name, ip, domain):
+        super().__init__(name, ip)  # Call parent init
+        self.domain = domain
+
+    # Add new method
+    def get_url(self):
+        return f"https://{self.domain}"
+
+# Another child class
+class DBServer(Server):
+    def __init__(self, name, ip, db_name):
+        super().__init__(name, ip)
+        self.db_name = db_name
+
+    # Add new method
+    def backup(self):
+        print(f"Backing up {self.db_name}...")
+
+# Use child classes
+web = WebServer('nginx1', '192.168.1.1', 'myapp.com')
+db  = DBServer('postgres1', '192.168.1.2', 'mydb')
+
+web.start()             # From parent
+web.info()              # From parent
+print(web.get_url())    # From child
+
+db.start()              # From parent
+db.backup()             # From child
+-------------------------------------------------------------------------------------------------------------------------------------------------
+7. Special Methods
+
+class Server:
+    def __init__(self, name, ip):
+        self.name   = name
+        self.ip     = ip
+        self.status = 'stopped'
+
+    # String representation
+    def __str__(self):
+        return f"Server({self.name}, {self.ip})"
+
+    # Detailed representation
+    def __repr__(self):
+        return f"Server(name={self.name}, ip={self.ip})"
+
+    # Compare two servers
+    def __eq__(self, other):
+        return self.ip == other.ip
+
+    # Length
+    def __len__(self):
+        return len(self.name)
+
+server = Server('web1', '192.168.1.1')
+print(server)               # Server(web1, 192.168.1.1)
+print(len(server))          # 4
+
+server1 = Server('web1', '192.168.1.1')
+server2 = Server('web2', '192.168.1.1')
+print(server1 == server2)   # True (same IP)
+-------------------------------------------------------------------------------------------------------------------------------------------------
+8. Real DevOps Use Cases
+✅ Server Manager Class
+
+import paramiko
+import subprocess
+
+class ServerManager:
+    def __init__(self, host, username, password=None,
+                 key_file=None):
+        self.host       = host
+        self.username   = username
+        self.password   = password
+        self.key_file   = key_file
+        self.ssh        = None
+        self.connected  = False
+
+    def connect(self):
+        try:
+            self.ssh = paramiko.SSHClient()
+            self.ssh.set_missing_host_key_policy(
+                paramiko.AutoAddPolicy()
+            )
+            self.ssh.connect(
+                self.host,
+                username=self.username,
+                password=self.password,
+                key_filename=self.key_file
+            )
+            self.connected = True
+            print(f"✅ Connected to {self.host}")
+        except Exception as e:
+            print(f"❌ Connection failed: {e}")
+
+    def disconnect(self):
+        if self.ssh:
+            self.ssh.close()
+            self.connected = False
+            print(f"Disconnected from {self.host}")
+
+    def run_command(self, command):
+        if not self.connected:
+            print("Not connected!")
+            return None
+        stdin, stdout, stderr = self.ssh.exec_command(
+            command
+        )
+        output      = stdout.read().decode('utf-8')
+        error       = stderr.read().decode('utf-8')
+        exit_code   = stdout.channel.recv_exit_status()
+        return output, error, exit_code
+
+    def upload_file(self, local, remote):
+        if not self.connected:
+            return False
+        sftp = self.ssh.open_sftp()
+        sftp.put(local, remote)
+        sftp.close()
+        print(f"✅ Uploaded {local} to {remote}")
+        return True
+
+    def get_disk_usage(self):
+        output, _, _ = self.run_command('df -h /')
+        return output
+
+    def restart_service(self, service):
+        _, _, code = self.run_command(
+            f'sudo systemctl restart {service}'
+        )
+        if code == 0:
+            print(f"✅ {service} restarted!")
+        else:
+            print(f"❌ Failed to restart {service}")
+
+# Use class
+server = ServerManager(
+    host='192.168.1.1',
+    username='ubuntu',
+    key_file='~/.ssh/id_rsa'
+)
+
+server.connect()
+print(server.get_disk_usage())
+server.restart_service('nginx')
+server.upload_file('app.jar', '/opt/myapp/app.jar')
+server.disconnect()
+
+✅ Docker Manager Class
+
+import docker
+
+class DockerManager:
+    def __init__(self):
+        self.client = docker.from_env()
+        print("✅ Connected to Docker!")
+
+    def build_image(self, path, tag):
+        print(f"Building {tag}...")
+        try:
+            self.client.images.build(path=path, tag=tag)
+            print(f"✅ Built {tag}!")
+            return True
+        except Exception as e:
+            print(f"❌ Build failed: {e}")
+            return False
+
+    def pull_image(self, image):
+        print(f"Pulling {image}...")
+        self.client.images.pull(image)
+        print(f"✅ Pulled {image}!")
+
+    def start_container(self, image, name, port,
+                        env_vars=None):
+        try:
+            self.client.containers.run(
+                image,
+                name=name,
+                detach=True,
+                ports={f'{port}/tcp': port},
+                environment=env_vars or {},
+                restart_policy={'Name': 'always'}
+            )
+            print(f"✅ Started {name}!")
+            return True
+        except Exception as e:
+            print(f"❌ Start failed: {e}")
+            return False
+
+    def stop_container(self, name):
+        try:
+            container = self.client.containers.get(name)
+            container.stop()
+            container.remove()
+            print(f"✅ Stopped {name}!")
+            return True
+        except docker.errors.NotFound:
+            print(f"{name} not found!")
+            return False
+
+    def get_container_status(self, name):
+        try:
+            container = self.client.containers.get(name)
+            return container.status
+        except docker.errors.NotFound:
+            return 'not found'
+
+    def list_containers(self):
+        containers = self.client.containers.list(all=True)
+        for c in containers:
+            print(f"{c.name:20} {c.status}")
+
+    def deploy(self, image, name, port, env_vars=None):
+        print(f"\nDeploying {name}...")
+        self.stop_container(name)
+        self.pull_image(image)
+        self.start_container(image, name, port, env_vars)
+        print(f"✅ {name} deployed!")
+
+# Use class
+docker_mgr = DockerManager()
+
+docker_mgr.deploy(
+    image='myapp:latest',
+    name='myapp',
+    port=8080,
+    env_vars={
+        'DB_HOST': 'localhost',
+        'DB_PASS': 'secret'
+    }
+)
+
+docker_mgr.list_containers()
+print(docker_mgr.get_container_status('myapp'))
+
+✅ AWS Manager Class
+
+import boto3
+
+class AWSManager:
+    def __init__(self, region='us-east-1'):
+        self.region = region
+        self.ec2    = boto3.client('ec2',
+                        region_name=region)
+        self.s3     = boto3.client('s3')
+        print(f"✅ Connected to AWS {region}")
+
+    def get_running_instances(self):
+        response    = self.ec2.describe_instances(
+            Filters=[{
+                'Name':   'instance-state-name',
+                'Values': ['running']
+            }]
+        )
+        instances   = []
+        for r in response['Reservations']:
+            for i in r['Instances']:
+                instances.append({
+                    'id':   i['InstanceId'],
+                    'type': i['InstanceType'],
+                    'ip':   i.get('PublicIpAddress', 'N/A')
+                })
+        return instances
+
+    def start_instance(self, instance_id):
+        self.ec2.start_instances(
+            InstanceIds=[instance_id]
+        )
+        print(f"✅ Started {instance_id}!")
+
+    def stop_instance(self, instance_id):
+        self.ec2.stop_instances(
+            InstanceIds=[instance_id]
+        )
+        print(f"✅ Stopped {instance_id}!")
+
+    def upload_to_s3(self, file_path, bucket, key):
+        try:
+            self.s3.upload_file(file_path, bucket, key)
+            print(f"✅ Uploaded to s3://{bucket}/{key}")
+            return True
+        except Exception as e:
+            print(f"❌ Upload failed: {e}")
+            return False
+
+    def send_alert(self, message, topic_arn):
+        sns = boto3.client('sns',
+                region_name=self.region)
+        sns.publish(
+            TopicArn=topic_arn,
+            Message=message,
+            Subject='AWS Alert'
+        )
+        print(f"✅ Alert sent!")
+
+# Use class
+aws = AWSManager(region='us-east-1')
+
+instances = aws.get_running_instances()
+for i in instances:
+    print(f"{i['id']}: {i['ip']}")
+
+aws.upload_to_s3(
+    '/var/log/app.log',
+    'my-bucket',
+    'logs/app.log'
+)
+
+✅ Deployment Pipeline Class
+
+import datetime
+import subprocess
+
+class DeploymentPipeline:
+    def __init__(self, app_name, environment):
+        self.app_name   = app_name
+        self.environment = environment
+        self.start_time = None
+        self.end_time   = None
+        self.steps      = []
+        self.success    = False
+
+    def log_step(self, step, status):
+        self.steps.append({
+            'step':   step,
+            'status': status,
+            'time':   str(datetime.datetime.now())
+        })
+        icon = "✅" if status == 'success' else "❌"
+        print(f"{icon} {step}")
+
+    def run_command(self, cmd, step_name):
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            self.log_step(step_name, 'success')
+            return True
+        else:
+            self.log_step(step_name, 'failed')
+            print(f"Error: {result.stderr}")
+            return False
+
+    def pull_code(self):
+        return self.run_command(
+            ['git', 'pull', 'origin', 'main'],
+            'Pull latest code'
+        )
+
+    def run_tests(self):
+        return self.run_command(
+            ['python', '-m', 'pytest'],
+            'Run tests'
+        )
+
+    def build_docker(self):
+        return self.run_command(
+            ['docker', 'build', '-t',
+             f'{self.app_name}:latest', '.'],
+            'Build Docker image'
+        )
+
+    def deploy(self):
+        return self.run_command(
+            ['kubectl', 'apply', '-f',
+             'deployment.yaml'],
+            'Deploy to Kubernetes'
+        )
+
+    def run_pipeline(self):
+        self.start_time = datetime.datetime.now()
+        print(f"\n🚀 Starting {self.app_name} "
+              f"deployment to {self.environment}")
+        print("=" * 50)
+
+        # Run all steps
+        if not self.pull_code():    return self.finish(False)
+        if not self.run_tests():    return self.finish(False)
+        if not self.build_docker(): return self.finish(False)
+        if not self.deploy():       return self.finish(False)
+
+        return self.finish(True)
+
+    def finish(self, success):
+        self.end_time   = datetime.datetime.now()
+        self.success    = success
+        duration        = (
+            self.end_time - self.start_time
+        ).seconds
+
+        print("=" * 50)
+        if success:
+            print(f"✅ Deployment successful! ({duration}s)")
+        else:
+            print(f"❌ Deployment failed! ({duration}s)")
+
+        print(f"\nSteps completed: {len(self.steps)}")
+        return success
+
+# Use class
+pipeline = DeploymentPipeline(
+    app_name='myapp',
+    environment='production'
+)
+pipeline.run_pipeline()
+-------------------------------------------------------------------------------------------------------------------------------------------------
+💡 Most Used in DevOps
+
+1. ServerManager     →  SSH, run commands, upload files
+2. DockerManager     →  Build, deploy, manage containers
+3. AWSManager        →  EC2, S3, manage cloud resources
+4. K8sManager        →  Deployments, pods, scaling
+5. DeploymentPipeline → Full CI/CD pipeline
+6. HealthChecker     →  Monitor multiple servers
+7. BackupManager     →  Automated backups
+8. AlertManager      →  Notifications & alerts
+-------------------------------------------------------------------------------------------------------------------------------------------------
