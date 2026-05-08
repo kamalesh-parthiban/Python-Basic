@@ -17,3 +17,26 @@ Python Fundamentals for DevOps
 12. File handling       → read/write files
 13. Exception handling  → handle errors
 14. Try/except          → prevent script failures
+
+Data Types
+-----------
+String
+List
+Tuple
+Dictionary
+Set
+
+Control Flow
+-------------
+If/else
+For loop
+While loop
+
+Programming Concepts
+---------------------
+Variables
+Functions
+Classes
+File handling
+Exception handling
+Try/except
