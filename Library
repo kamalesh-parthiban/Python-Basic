@@ -8,7 +8,13 @@
 6. docker                → Container management
 7. pytest                → Testing your scripts
 
-------------------------------------------
+Module
+→ a single Python file
+
+Library
+→ collection of modules/packages
+
+------------------------------------------------------------------------
 Python Module            Purpose                     Bash Alternative
 -----------------------------------------------------------------------------
 1. os, sys, subprocess   System automation           shell commands
