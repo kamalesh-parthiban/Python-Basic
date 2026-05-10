@@ -202,3 +202,182 @@ def lambda_handler(event, context):
 ===========================================
 END
 ===========================================
+
+===========================================
+LAMBDA IMAGE PROCESSOR - LINE BY LINE
+===========================================
+
+import boto3
+→ Load AWS SDK library to talk to AWS services
+
+from PIL import Image
+→ Load Pillow library to resize images
+
+import io
+→ Load io library to handle file data in memory
+  (without saving to disk)
+
+s3 = boto3.client('s3')
+→ Create S3 connection client
+  so we can read and write files to S3
+
+------------------------------------------
+VERSIONS dictionary
+------------------------------------------
+
+VERSIONS = {
+    '4k':    (3840, 2160),
+    '1080p': (1920, 1080),
+    '720p':  (1280, 720),
+    '480p':  (854,  480),
+    '360p':  (640,  360),
+}
+→ Dictionary storing all resize dimensions
+  key   = folder name (4k, 1080p etc)
+  value = width x height in pixels
+  Lambda will loop through each and create that version
+
+------------------------------------------
+LAMBDA ENTRY POINT
+------------------------------------------
+
+def lambda_handler(event, context):
+→ Main function AWS calls when Lambda triggers
+  event   = input data from S3 (bucket name, file key)
+  context = AWS runtime info (timeout, request id)
+
+------------------------------------------
+STEP 1 - GET FILE DETAILS FROM EVENT
+------------------------------------------
+
+bucket = event['Records'][0]['s3']['bucket']['name']
+→ Get bucket name from S3 event
+  example: my-image-processor-2024
+
+key = event['Records'][0]['s3']['object']['key']
+→ Get file path from S3 event
+  example: uploads/photo.jpg
+
+filename = key.split('/')[-1]
+→ Extract just the filename from full path
+  uploads/photo.jpg → photo.jpg
+  split('/') gives ['uploads', 'photo.jpg']
+  [-1] takes last item → photo.jpg
+
+------------------------------------------
+STEP 2 - DOWNLOAD ORIGINAL FROM S3
+------------------------------------------
+
+response = s3.get_object(Bucket=bucket, Key=key)
+→ Download the uploaded file from S3
+  returns a response object with file data
+
+original = response['Body'].read()
+→ Read the actual file bytes from response
+  stores entire image in memory as bytes
+
+------------------------------------------
+STEP 3 - SAVE ORIGINAL UNTOUCHED
+------------------------------------------
+
+s3.put_object(
+    Bucket = bucket,
+    Key    = f'original/{filename}',
+    Body   = original
+)
+→ Save original file to original/ folder
+  example: original/photo.jpg
+  f'original/{filename}' is string formatting
+  original = untouched file bytes
+
+------------------------------------------
+STEP 4 - OPEN IMAGE FOR PROCESSING
+------------------------------------------
+
+image = Image.open(io.BytesIO(original))
+→ Open image bytes using Pillow
+  io.BytesIO wraps bytes as a file-like object
+  Image.open reads it as an image
+  now we can resize it
+
+------------------------------------------
+STEP 5 - LOOP AND CREATE ALL VERSIONS
+------------------------------------------
+
+for version_name, size in VERSIONS.items():
+→ Loop through each version in dictionary
+  version_name = '4k', '1080p', '720p' etc
+  size         = (3840,2160), (1920,1080) etc
+
+    resized = image.resize(size)
+    → Resize image to that version's dimensions
+      example: resize to (1920, 1080) for 1080p
+
+    buffer = io.BytesIO()
+    → Create empty memory buffer
+      like an empty container to hold resized image
+
+    resized.save(buffer, format='JPEG')
+    → Save resized image into the memory buffer
+      format JPEG means save as jpg file
+
+    buffer.seek(0)
+    → Move buffer pointer back to start
+      like rewinding a tape before reading
+      needed so S3 can read from beginning
+
+    s3.put_object(
+        Bucket = bucket,
+        Key    = f'{version_name}/{filename}',
+        Body   = buffer
+    )
+    → Upload resized version to S3
+      Key example: 1080p/photo.jpg
+      Body = resized image data from buffer
+
+    print(f'{version_name} version created successfully')
+    → Log message to CloudWatch
+      confirms each version was created
+
+------------------------------------------
+STEP 6 - RETURN RESPONSE
+------------------------------------------
+
+return {'status': 'done', 'versions': list(VERSIONS.keys())}
+→ Return confirmation response
+  status   = done
+  versions = ['4k', '1080p', '720p', '480p', '360p']
+  useful for debugging or chaining with other services
+
+===========================================
+FINAL FLOW SUMMARY
+===========================================
+
+Upload photo.jpg to uploads/
+        │
+        ▼
+Lambda reads bucket + key from event
+        │
+        ▼
+Downloads original from S3
+        │
+        ▼
+Saves to original/photo.jpg
+        │
+        ▼
+Opens image with Pillow
+        │
+        ▼
+Loops 5 times:
+├── Resize to 4k    → saves 4k/photo.jpg
+├── Resize to 1080p → saves 1080p/photo.jpg
+├── Resize to 720p  → saves 720p/photo.jpg
+├── Resize to 480p  → saves 480p/photo.jpg
+└── Resize to 360p  → saves 360p/photo.jpg
+        │
+        ▼
+Returns status done
+
+===========================================
+END
+===========================================
