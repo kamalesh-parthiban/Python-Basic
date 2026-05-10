@@ -1,6 +1,8 @@
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 boto3 = Control ALL AWS Services from Python! // boto3 = Full control of ALL AWS infrastructure from Python!
 This is the backbone of AWS DevOps automation! 🚀
+
+boto3 is the AWS SDK for Python. It lets your code talk to AWS services (EC2, S3, RDS, etc.) programmatically.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 boto3 was built by Amazon specifically for AWS. It cannot connect to Google Cloud, Azure, or any other service!
 -----------------------------------------------------------------------------------------------------------------------
