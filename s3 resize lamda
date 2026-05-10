@@ -1,0 +1,204 @@
+===========================================
+AWS LAMBDA IMAGE PROCESSOR - COMPLETE SETUP
+===========================================
+
+WHAT IT DOES:
+Upload image to S3 → Lambda auto triggers →
+Creates 5 versions (4k, 1080p, 720p, 480p, 360p)
+→ Saves all versions to separate folders
+
+===========================================
+STEP 1 - CREATE S3 BUCKET
+===========================================
+Go to S3 Console
+Click Create Bucket
+Bucket name     → my-image-processor-2024
+Region          → us-east-2
+Public access   → Block all (default)
+Versioning      → Disable
+Encryption      → Default
+Click Create Bucket
+
+===========================================
+STEP 2 - CREATE LAMBDA FUNCTION
+===========================================
+Go to Lambda Console
+Click Create Function
+Option          → Author from scratch
+Function name   → image-processor
+Runtime         → Python 3.12
+Architecture    → x86_64
+Execution role  → Create new role with basic Lambda permissions
+Click Create Function
+
+After creation:
+Click Code tab
+Delete existing code
+Paste your image processor code
+Click Deploy
+
+Click Configuration tab
+Click General Configuration → Edit
+Memory          → 512MB
+Timeout         → 30 seconds
+Click Save
+
+===========================================
+STEP 3 - IAM ROLE PERMISSIONS
+===========================================
+Go to IAM Console
+Click Roles
+Search → image-processor-role
+Click Add Permissions → Create Inline Policy
+Paste this JSON:
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::my-image-processor-2024/*"
+    }
+  ]
+}
+
+Policy name → image-processor-s3-policy
+Click Create Policy
+
+===========================================
+STEP 4 - ADD PILLOW LAYER
+===========================================
+Go to Lambda Console
+Open image-processor function
+Scroll down to Layers section
+Click Edit → Add a Layer
+Select → Specify an ARN
+Paste this ARN:
+
+arn:aws:lambda:us-east-2:770693421928:layer:Klayers-p312-Pillow:9
+
+Click Verify → Add
+
+NOTE: Do NOT use AWSSDKPandas layer
+      That does not have Pillow/PIL
+      Use only Klayers-p312-Pillow
+
+===========================================
+STEP 5 - ADD S3 TRIGGER
+===========================================
+Go to Lambda Console
+Open image-processor function
+Click Add Trigger
+Source          → S3
+Bucket          → my-image-processor-2024
+Event type      → PUT
+Prefix          → uploads/
+Check the acknowledgement box
+Click Add
+
+NOTE: Prefix uploads/ is important
+      Prevents infinite loop
+      Lambda only triggers on uploads/ folder
+      Not on processed output folders
+
+===========================================
+STEP 6 - TEST
+===========================================
+Go to S3 Console
+Open my-image-processor-2024
+Create folder → uploads
+Upload any image inside uploads/ folder
+
+Check bucket after upload:
+my-image-processor-2024/
+├── uploads/photo.jpg      ← you uploaded
+├── original/photo.jpg     ← Lambda created
+├── 4k/photo.jpg           ← Lambda created
+├── 1080p/photo.jpg        ← Lambda created
+├── 720p/photo.jpg         ← Lambda created
+├── 480p/photo.jpg         ← Lambda created
+└── 360p/photo.jpg         ← Lambda created
+
+===========================================
+TROUBLESHOOTING
+===========================================
+Error: No module named PIL
+Fix:   Wrong layer added
+       Add Klayers-p312-Pillow ARN layer
+
+Error: AccessDenied
+Fix:   IAM policy not attached to role
+       Check Step 3
+
+Error: Task timed out
+Fix:   Increase timeout to 60 seconds
+       Configuration → General Configuration
+
+Error: Lambda not triggering
+Fix:   Check S3 trigger prefix matches uploads/
+       Check CloudWatch logs for errors
+
+===========================================
+CLOUDWATCH LOGS - HOW TO CHECK
+===========================================
+Go to Lambda Console
+Click Monitor tab
+Click View CloudWatch Logs
+Click latest Log Stream
+See exact error message
+
+===========================================
+LAMBDA CODE
+===========================================
+import boto3
+from PIL import Image
+import io
+
+s3 = boto3.client('s3')
+
+VERSIONS = {
+    '4k':    (3840, 2160),
+    '1080p': (1920, 1080),
+    '720p':  (1280, 720),
+    '480p':  (854,  480),
+    '360p':  (640,  360),
+}
+
+def lambda_handler(event, context):
+
+    bucket   = event['Records'][0]['s3']['bucket']['name']
+    key      = event['Records'][0]['s3']['object']['key']
+    filename = key.split('/')[-1]
+
+    response = s3.get_object(Bucket=bucket, Key=key)
+    original = response['Body'].read()
+
+    s3.put_object(
+        Bucket = bucket,
+        Key    = f'original/{filename}',
+        Body   = original
+    )
+
+    image = Image.open(io.BytesIO(original))
+
+    for version_name, size in VERSIONS.items():
+        resized = image.resize(size)
+        buffer  = io.BytesIO()
+        resized.save(buffer, format='JPEG')
+        buffer.seek(0)
+        s3.put_object(
+            Bucket = bucket,
+            Key    = f'{version_name}/{filename}',
+            Body   = buffer
+        )
+        print(f'{version_name} version created successfully')
+
+    return {'status': 'done', 'versions': list(VERSIONS.keys())}
+
+===========================================
+END
+===========================================
