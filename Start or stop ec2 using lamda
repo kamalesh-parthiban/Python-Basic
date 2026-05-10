@@ -1,0 +1,184 @@
+Easiest way — EventBridge + Lambda:
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Step 1 — Create Lambda function:
+
+Lambda Console → Create function
+Name: ec2-start-stop
+Runtime: Python 3.12
+→ Create ✅
+
+Paste this code:
+
+import boto3
+
+ec2 = boto3.client('ec2', region_name='us-east-2')
+
+INSTANCE_ID = 'i-09519fa48c7c66f84'  # your instance ID
+
+def lambda_handler(event, context):
+    action = event.get('action')
+
+    if action == 'stop':
+        ec2.stop_instances(InstanceIds=[INSTANCE_ID])
+        print(f"Instance {INSTANCE_ID} stopped ✅")
+
+    elif action == 'start':
+        ec2.start_instances(InstanceIds=[INSTANCE_ID])
+        print(f"Instance {INSTANCE_ID} started ✅")
+
+    return {'status': 'done', 'action': action}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Step 2 — Add IAM permission to Lambda role:
+
+Lambda → Configuration → Permissions
+→ Click role name → IAM opens
+→ Add inline policy → JSON:
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "ec2:DescribeInstances"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+
+Policy name: ec2-start-stop-policy
+→ Create ✅
+
+----------------------------------------------------------------------------------------------------------------------------------
+================================================
+RULE 1 - START RULE
+================================================
+
+Step 1 - EventBridge Console
+→ EventBridge → Scheduled rules → Create rule
+
+Step 2 - Define Rule Detail
+→ Name:        start-jenkins-ec2
+→ Description: Starts EC2 at 1:30 PM IST
+→ Rule type:   Schedule
+→ Click Next
+
+Step 3 - Define Schedule
+→ Select: A fine-grained schedule
+→ Cron expression:
+   minutes  = 0
+   hours    = 8
+   day      = *
+   month    = *
+   weekday  = ?
+   year     = *
+→ Full cron: 0 8 * * ? *
+→ Verify: Next trigger shows 08:00 UTC
+→ Click Next
+
+Step 4 - Select Target
+→ Target type  = AWS service
+→ Target       = Lambda function
+→ Function     = ec2-start-stop
+→ Exec role    = Create new role
+
+Step 5 - Additional Settings
+→ Configure target input = Constant (JSON text)
+→ JSON box type ONLY:
+   {"action": "start"}
+→ Click Next
+
+Step 6 - Tags
+→ Skip
+→ Click Next
+
+Step 7 - Review and Create
+→ Verify all settings
+→ Click Create rule ✅
+
+================================================
+RULE 2 - STOP RULE
+================================================
+
+Step 1 - EventBridge Console
+→ EventBridge → Scheduled rules → Create rule
+
+Step 2 - Define Rule Detail
+→ Name:        stop-jenkins-ec2
+→ Description: Stops EC2 at 2:00 PM IST
+→ Rule type:   Schedule
+→ Click Next
+
+Step 3 - Define Schedule
+→ Select: A fine-grained schedule
+→ Cron expression:
+   minutes  = 30
+   hours    = 8
+   day      = *
+   month    = *
+   weekday  = ?
+   year     = *
+→ Full cron: 30 8 * * ? *
+→ Verify: Next trigger shows 08:30 UTC
+→ Click Next
+
+Step 4 - Select Target
+→ Target type  = AWS service
+→ Target       = Lambda function
+→ Function     = ec2-start-stop
+→ Exec role    = Create new role
+
+Step 5 - Additional Settings
+→ Configure target input = Constant (JSON text)
+→ JSON box type ONLY:
+   {"action": "stop"}
+→ Click Next
+
+Step 6 - Tags
+→ Skip
+→ Click Next
+
+Step 7 - Review and Create
+→ Verify all settings
+→ Click Create rule ✅
+
+================================================
+VERIFY BOTH RULES
+================================================
+
+EventBridge → Scheduled rules
+
+Should see:
+start-jenkins-ec2    Enabled ✅
+stop-jenkins-ec2     Enabled ✅
+
+================================================
+CRON QUICK REFERENCE
+================================================
+
+START → 0  8 * * ? * = 1:30 PM IST = 8:00 UTC
+STOP  → 30 8 * * ? * = 2:00 PM IST = 8:30 UTC
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Test Lambda manually:
+
+Lambda → ec2-start-stop
+→ Test tab
+→ Create test event:
+
+Stop test:
+{
+  "action": "stop"
+}
+
+Start test:
+{
+  "action": "start"
+}
+
+→ Click Test ✅
+→ Check EC2 instance state changes ✅
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
