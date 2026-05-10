@@ -44,7 +44,21 @@ Constant           MAX_RETRY = 3
 
 Global             global variable_name
 ------------------------------------------------------------------------------------------------------------------------------
+replicas = 1
 
+# Option 1: print variable directly
+print(replicas)
+# Output: 1 ✅
+
+# Option 2: print with text → need f-string
+print(f"Replicas: {replicas}")
+# Output: Replicas: 1 ✅
+
+# Option 3: print with text → old way
+print("Replicas: " + str(replicas))
+# Output: Replicas: 1 ✅
+
+------------------------------------------------------------------------------------------------------------------------------
 🤔 What is a Variable?
 Think of Variable as a Storage Box 📦
 
