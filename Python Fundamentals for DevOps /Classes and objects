@@ -1,6 +1,9 @@
 -------------------------------------------------------------------------------------------------------------------------------------------------
-Class = Blueprint for organized code!
-Group related data & functions together! Makes DevOps scripts cleaner, reusable & easier to maintain! 🚀
+Class is a blueprint or template that defines variables and functions in one place.
+You create multiple objects from one class — each object gets its own data but shares the same functions.
+
+Object is an instance created from a class — like a real server built from a blueprint.
+Each object has its own data (variables) but uses the same functions defined in the class.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 📊 Summary Table
 
@@ -26,6 +29,90 @@ Call parent       super().__init__()
 
 String repr       def __str__(self):
 -------------------------------------------------------------------------------------------------------------------------------------------------
+# Define class ONCE
+class Server:
+    def __init__(self, name, ip, port):
+        self.name = name    # variable
+        self.ip   = ip      # variable
+        self.port = port    # variable
+
+    def start(self):        # function
+        print(f"{self.name} started on {self.ip}:{self.port} ✅")
+
+    def stop(self):         # function
+        print(f"{self.name} stopped ✅")
+
+    def status(self):       # function
+        print(f"{self.name} is running at {self.ip}")
+---------------------------------------------------
+Create multiple objects — reuse same class:
+---------------------------------------------------
+# Object 1
+web1 = Server('web1', '192.168.1.1', 80)
+
+# Object 2
+web2 = Server('web2', '192.168.1.2', 80)
+
+# Object 3
+db1  = Server('db1',  '192.168.1.3', 5432)
+---------------------------------------------------
+Each object uses same functions independently:
+---------------------------------------------------
+# Use same functions on different objects
+web1.start()    # web1 started on 192.168.1.1:80 ✅
+web2.start()    # web2 started on 192.168.1.2:80 ✅
+db1.start()     # db1  started on 192.168.1.3:5432 ✅
+
+web1.stop()     # web1 stopped ✅
+web2.status()   # web2 is running at 192.168.1.2 ✅
+db1.stop()      # db1  stopped ✅
+---------------------------------------------------
+Each object has own variables:
+---------------------------------------------------
+print(web1.name)    # web1
+print(web2.name)    # web2
+print(db1.port)     # 5432
+
+# Changing one does not affect other
+web1.port = 9090
+print(web1.port)    # 9090
+print(web2.port)    # 80 (unchanged) ✅
+--------------------------------------------------------------------------------------------------------------------------------
+Real DevOps example:
+-----------------------
+class EC2:
+    def __init__(self, instance_id, region):
+        self.instance_id = instance_id
+        self.region      = region
+        self.ec2         = boto3.client('ec2', region_name=region)
+
+    def start(self):
+        self.ec2.start_instances(InstanceIds=[self.instance_id])
+        print(f"{self.instance_id} started ✅")
+
+    def stop(self):
+        self.ec2.stop_instances(InstanceIds=[self.instance_id])
+        print(f"{self.instance_id} stopped ✅")
+
+    def status(self):
+        response = self.ec2.describe_instances(
+            InstanceIds=[self.instance_id]
+        )
+        state = response['Reservations'][0]['Instances'][0]['State']['Name']
+        print(f"{self.instance_id} is {state}")
+
+# Create objects for each instance
+jenkins = EC2('i-09519fa48c7c66f84', 'us-east-2')
+web     = EC2('i-0123456789abcdef0', 'us-east-2')
+db      = EC2('i-0987654321fedcba0', 'us-east-2')
+
+# Use same functions on all
+jenkins.stop()    # i-09519fa48c7c66f84 stopped ✅
+web.start()       # i-0123456789abcdef0 started ✅
+db.status()       # i-0987654321fedcba0 is running ✅
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 🤔 What is a Class?
 Think of Class as a Blueprint 🏗️
 
@@ -58,6 +145,7 @@ class Server:
 
 server1 = Server('web1', '192.168.1.1')
 server2 = Server('web2', '192.168.1.2')
+
 -------------------------------------------------------------------------------------------------------------------------------------------------
 1. Create Basic Class
 
