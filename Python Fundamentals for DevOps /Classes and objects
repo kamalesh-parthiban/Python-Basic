@@ -5,6 +5,9 @@ You create multiple objects from one class — each object gets its own data but
 Object is an instance created from a class — like a real server built from a blueprint.
 Each object has its own data (variables) but uses the same functions defined in the class.
 
+self refers to the current object calling the function — it tells Python which object's data to use.
+Without self Python cannot distinguish between different objects' variables.
+
 https://www.youtube.com/watch?v=rltSHY2Y7-c
 -------------------------------------------------------------------------------------------------------------------------------------------------
 📊 Summary Table
