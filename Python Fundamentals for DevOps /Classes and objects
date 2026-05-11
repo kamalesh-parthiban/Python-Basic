@@ -10,6 +10,29 @@ Without self Python cannot distinguish between different objects' variables.
 
 https://www.youtube.com/watch?v=rltSHY2Y7-c
 -------------------------------------------------------------------------------------------------------------------------------------------------
+__init__:
+
+Without __init__:
+
+class Server:
+    def set_details(self, name, ip):
+        self.name = name
+        self.ip   = ip
+
+server = Server()
+server.set_details('web1', '192.168.1.1')  # you have to call manually
+
+With __init__:
+
+class Server:
+    def __init__(self, name, ip):
+        self.name = name
+        self.ip   = ip
+
+server = Server('web1', '192.168.1.1')  # automatic ✅
+
+--------------------------------------------------------------------------------------------------------------------------------
+
 📊 Summary Table
 
 Feature           Code
