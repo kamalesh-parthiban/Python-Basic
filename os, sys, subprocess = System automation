@@ -181,6 +181,67 @@ Scripts         bash, python, ansible, terraform
 
 Errors          CalledProcessError, timeout
 
+----------------------------------------------------------------------------------------
+For Multi cmd in one server
+-----------------------
+import subprocess
+
+server = 'web1'
+
+commands = [
+    ['echo', f'Checking server: {server}'],
+    ['ping', '-c', '1', '8.8.8.8'],
+    ['df', '-h'],
+    ['free', '-h'],
+    ['uptime'],
+]
+
+for cmd in commands:
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    print(result.stdout)
+
+--------------------
+Here is the expected output:
+----------------------
+Checking server: web1
+
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=5.23 ms
+
+--- 8.8.8.8 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss
+
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/xvda1       20G  8.2G   11G  44% /
+tmpfs           7.7G     0  7.7G   0% /dev/shm
+
+               total        used        free
+Mem:            15Gi        4Gi        9Gi
+Swap:             0B          0B          0B
+
+10:30:01 up 5 days, 3:22,  1 user,  load average: 0.12, 0.08, 0.05
+--------------------------------------------------------------
+For Multi server
+-----------------
+Just add a servers list and loop through them:
+-------------------
+import subprocess
+
+servers = ['web1', 'web2', 'web3', 'web4']
+
+commands = [
+    ['ping', '-c', '1', '8.8.8.8'],
+    ['df', '-h'],
+    ['free', '-h'],
+    ['uptime'],
+]
+
+for server in servers:
+    print(f"========== {server} ==========")
+    for cmd in commands:
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        print(result.stdout)
+    print()
 
 --------------------------------------------------------------
 1. Basic Command Running
